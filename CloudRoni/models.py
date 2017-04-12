@@ -3,3 +3,32 @@ from __future__ import unicode_literals
 from django.db import models
 
 # Create your models here.
+class Team(models.Model):
+    team_name = models.CharField(max_length=200)
+    created_date = models.DateTimeField('date published')
+
+    def __str__(self):
+        return self.team_name
+
+class UserPlayer(models.Model):
+    HEAVY_USE = 'HU'
+    MODERATE_USE = 'MU'
+    LIGHT_USE = 'LU'
+    NOT_USING = 'NU'
+    USAGE_CHOICES = (
+        (HEAVY_USE, 'Heavy Use'),
+        (MODERATE_USE, 'Moderate Use'),
+        (LIGHT_USE, 'Light Use'),
+        (NOT_USING, 'Not Using'),
+    )
+    player_team = models.ForeignKey(Team,
+                                    on_delete=models.CASCADE)
+    player_first_name = models.CharField(max_length=20)
+    player_last_name = models.CharField(max_length=20)
+    usage = models.CharField(
+        max_length=2,
+        choices=USAGE_CHOICES,
+        default=NOT_USING,)
+
+    def __str__(self):
+        return self.player_first_name + self.player_last_name
