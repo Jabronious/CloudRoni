@@ -31,6 +31,7 @@ class UserPlayer(models.Model):
                                     on_delete=models.CASCADE)
     player_first_name = models.CharField(max_length=20)
     player_last_name = models.CharField(max_length=20)
+    points_scored = models.IntegerField(default=0)
     usage = models.CharField(
         max_length=2,
         choices=USAGE_CHOICES,
