@@ -1,6 +1,9 @@
 from __future__ import unicode_literals
 
+import datetime
+
 from django.db import models
+from django.utils import timezone
 
 # Create your models here.
 class Team(models.Model):
@@ -9,6 +12,9 @@ class Team(models.Model):
 
     def __str__(self):
         return self.team_name
+
+    def was_created_recently(self):
+        return self.created_date >= timezone.now() - datetime.timedelta(days=1)
 
 class UserPlayer(models.Model):
     HEAVY_USE = 'HU'
@@ -31,4 +37,4 @@ class UserPlayer(models.Model):
         default=NOT_USING,)
 
     def __str__(self):
-        return self.player_first_name + self.player_last_name
+        return self.player_first_name + ' ' + self.player_last_name
