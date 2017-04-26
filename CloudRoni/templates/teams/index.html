@@ -1,0 +1,9 @@
+{% if teams_list %}
+	<ul>
+	{% for team in teams_list %}
+		<li><a href="/CloudRoni/{{ team.id }}/">{{ team.team_name }}</a></li>
+	{% endfor %}
+	</ul>
+	{% else %}
+		<p>There are no teams.</p>
+{% endif %}
