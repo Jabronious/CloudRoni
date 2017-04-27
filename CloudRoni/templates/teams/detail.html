@@ -1,0 +1,6 @@
+<h1>{{ team.team_name }}</h1>
+<ul>
+{% for player in team.userplayer_set.all %}
+	<li><a href="{% url 'cloud_roni:players' team.id player.id %}">{{ player }}</a></li>
+{% endfor %}
+</ul>
