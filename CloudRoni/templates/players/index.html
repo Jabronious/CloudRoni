@@ -1,7 +1,7 @@
 <h1>{{ player }}</h1>
 <h3>Team: <span style='font-weight: normal'>{{ team.team_name }}</span></h3>
 
-<p style='font-weight: bold;'>Usage: <span style='font-weight: normal'>{{ player.points_scored }}</span></p>
-<p style='font-weight: bold;'>Points Scored: <span style='font-weight: normal'>{{ player.get_usage_display }}</span></p>
+<p style='font-weight: bold;'>Usage: <span style='font-weight: normal'>{{ player.get_usage_display }}</span></p>
+<p style='font-weight: bold;'>Points Scored: <span style='font-weight: normal'>{{ player.points_scored }}</span></p>
 
 <a href="{% url 'cloud_roni:team' team.id %}">Back to {{ team.team_name }}</a>
