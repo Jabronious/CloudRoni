@@ -5,7 +5,6 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template import loader
 from django.urls import reverse
 
-from .forms import UserPlayerForm
 from .models import Team, UserPlayer
 
 def index(request):
