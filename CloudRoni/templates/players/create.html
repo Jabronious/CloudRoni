@@ -1,0 +1,21 @@
+<h1>{{ team.team_name }}</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form role="form" action="" method="post">
+	{% csrf_token %}
+	{{ form.as_p }}
+<!--<div class='name'>
+	<label for="first-name">First Name:</label><br />
+    <input type="text" name="first-name" placeholder="Player First Name" />
+</div>
+<div class='name'>
+    <label for="first-name">Last Name:</label><br />
+    <input type="text" name="last-name" placeholder="Player First Name" /><br>
+</div>
+    <input type="radio" name="usage" value="Heavy Use" checked> Heavy<br>
+	<input type="radio" name="usage" value="Moderate Use"> Moderate<br>
+	<input type="radio" name="usage" value="Light Use"> Light<br>
+	<input type="radio" name="usage" value="Not Using"> Not Using<br>-->
+<button type="submit">Create</button>
+</form>
