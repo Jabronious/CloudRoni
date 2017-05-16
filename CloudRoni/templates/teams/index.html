@@ -1,7 +1,8 @@
+<h1>Teams</h1>
 {% if teams_list %}
 	<ul>
 	{% for team in teams_list %}
-		<li><a href="{% url 'cloud_roni:team' team.id %}">{{ team.team_name }}</a></li>
+		<li><a href="{% url 'team' team.id %}">{{ team.team_name }}</a></li>
 	{% endfor %}
 	</ul>
 	{% else %}

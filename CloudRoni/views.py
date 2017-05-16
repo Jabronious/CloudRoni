@@ -39,7 +39,7 @@ def create_player(request, team_id):
 			new_player = form.save(commit=False)
 			new_player.player_team = team
 			new_player.save()
-			return HttpResponseRedirect(reverse('cloud_roni:team', args= (team.id,)))
+			return HttpResponseRedirect(reverse('team', args= (team.id,)))
 		else:
 			return render(request, 'players/create.html', {
 					'form': form_class,

@@ -27,7 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.1.22',
                  '192.168.1.9',
-                 '127.0.0.1',]
+                 '127.0.0.1',
+                 'cloud-roni-jabronious.c9users.io',]
 
 
 # Application definition
@@ -52,7 +53,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'cloud_project.urls'
+ROOT_URLCONF = 'CloudRoni.urls'
 
 TEMPLATES = [
     {
