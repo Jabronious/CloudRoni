@@ -11,4 +11,6 @@ urlpatterns = [
     url(r'^(?P<team_id>[0-9]+)/players/(?P<player_id>[0-9]+)/$', views.players, name='players'),
     # ex: CloudRoni/2/create_player
     url(r'^(?P<team_id>[0-9]+)/create_player/$', views.create_player, name='create_player'),
+    # ex: CloudRoni/create_team
+    url(r'^create_team/$', views.create_team, name='create_team'),
 ]

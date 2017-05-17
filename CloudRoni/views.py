@@ -4,7 +4,8 @@ from django.template import loader
 from django.urls import reverse
 
 from .models import Team, UserPlayer
-from .forms import UserPlayerForm
+from .forms import UserPlayerForm, TeamForm
+from django.utils import timezone
 
 import pdb
 
@@ -50,4 +51,25 @@ def create_player(request, team_id):
 	return render(request, 'players/create.html', {
 				'form': form_class,
 				'team': team,
+				})
+
+def create_team(request):
+	form_class = TeamForm
+
+	if request.method == 'POST':
+		form = form_class(request.POST, request.FILES)
+
+		if form.is_valid():
+			new_team = form.save(commit=False)
+			new_team.created_date = timezone.now()
+			new_team = form.save()
+			return HttpResponseRedirect(reverse('index'))
+		else:
+			return render(request, 'teams/create.html', {
+					'form': form_class,
+					'error_message': "Invalid Information!",
+				})
+
+	return render(request, 'teams/create.html', {
+				'form': form_class,
 				})
