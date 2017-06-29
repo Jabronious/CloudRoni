@@ -5,3 +5,6 @@ cloud_project/settings.pyc
 CloudRoni/__pycache__
 *.pyc
 CloudRoni/*.pyc
+settings.py
+settings.pyc
+
