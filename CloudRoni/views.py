@@ -3,8 +3,8 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.template import loader
 from django.urls import reverse
 
-from .models import Team, UserPlayer
-from .forms import UserPlayerForm, TeamForm
+from .models import Team, UserPlayer, Point
+from .forms import UserPlayerForm, TeamForm, PointForm
 from django.utils import timezone
 
 import pdb
@@ -23,9 +23,31 @@ def team(request, team_id):
 def players(request, team_id, player_id):
 	player = get_object_or_404(UserPlayer, pk=player_id)
 	team = get_object_or_404(Team, pk=team_id)
+	form_class = PointForm
+	
+	if request.method == "POST":
+		form = form_class(request.POST, request.FILES)
+		
+		if form.is_valid():
+			point = form.save(commit=False)
+			point.player = player
+			point.save()
+			player.points_scored += point.point
+			player.save()
+		else:
+			return render(request, 'players/idex.html', {
+				'player': player,
+				'team': team,
+				'points': Point.objects.filter(player=player),
+				'form': form_class,
+				'error_message': "Note is required",
+			})
+			
 	context = {
 		'player': player,
-		'team': team
+		'team': team,
+		'points': Point.objects.filter(player=player),
+		'form': form_class,
 	}
 	return render(request, 'players/index.html', context)
 

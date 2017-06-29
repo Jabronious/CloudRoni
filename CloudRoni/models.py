@@ -39,3 +39,19 @@ class UserPlayer(models.Model):
 
     def __str__(self):
         return self.player_first_name + ' ' + self.player_last_name
+
+class Point(models.Model):
+    ONE = 1
+    MINUS_ONE = -1
+    FIVE = 5
+    POINT_CHOICES = (
+        (ONE, "+1"),
+        (MINUS_ONE, "-1"),
+        (FIVE, "+5"),
+    )
+    player = models.ForeignKey(UserPlayer,
+                              on_delete=models.CASCADE)
+    point = models.IntegerField(
+        choices=POINT_CHOICES,
+        default=0)
+    note = models.TextField(max_length=200)
