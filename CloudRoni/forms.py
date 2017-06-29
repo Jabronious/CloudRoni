@@ -1,5 +1,5 @@
 from django import forms
-from CloudRoni.models import UserPlayer, Team
+from CloudRoni.models import UserPlayer, Team, Point
 from django.forms import ModelForm
 
 CHOICES=[('HU', 'Heavy Usage'),
@@ -16,3 +16,8 @@ class TeamForm(ModelForm):
     class Meta:
         model = Team
         exclude = ['created_date']
+        
+class PointForm(ModelForm):
+    class Meta:
+        model = Point
+        exclude = ['player']
