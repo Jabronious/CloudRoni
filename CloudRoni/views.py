@@ -2,6 +2,7 @@ from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.template import loader
 from django.urls import reverse
+from django.views import generic
 
 from .models import Team, UserPlayer, Point
 from .forms import UserPlayerForm, TeamForm, PointForm
@@ -9,16 +10,24 @@ from django.utils import timezone
 
 import pdb
 
-def index(request):
-    teams_list = Team.objects.order_by('-created_date')[:10]
-    context = {
-		'teams_list': teams_list,
-	}
-    return render(request, 'teams/index.html', context)
+class IndexView(generic.ListView):
+	template_name = 'teams/index.html'
+	context_object_name = 'teams_list'
+	
+	def get_queryset(self):
+		"""Return all teams"""
+		return Team.objects.all().order_by('-created_date')
+    #teams_list = Team.objects.order_by('-created_date')[:10]
+    #context = {
+	#	'teams_list': teams_list,
+	#}
+    #return render(request, 'teams/index.html', context)
 
-def team(request, team_id):
-	team = get_object_or_404(Team, pk=team_id)
-	return render(request, 'teams/detail.html', {'team': team}) 
+class TeamView(generic.DetailView):
+	model = Team
+	template_name = 'teams/detail.html'
+	#team = get_object_or_404(Team, pk=team_id)
+	#return render(request, 'teams/detail.html', {'team': team}) 
 
 def players(request, team_id, player_id):
 	player = get_object_or_404(UserPlayer, pk=player_id)

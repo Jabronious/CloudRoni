@@ -1,11 +1,21 @@
 <h1>Teams</h1>
 {% if teams_list %}
-	<ul>
+<table>
+	<th>Team Name</th>
+	<th>Total Points</th>
 	{% for team in teams_list %}
-		<li><a href="{% url 'team' team.id %}">{{ team.team_name }}</a></li>
+		<tr>
+			<td><a href="{% url 'team' team.id %}">{{ team.team_name }}</a></td>
+			{% if team.filter_team_points >= 0 %}
+				<td>{{ team.filter_team_points }}</td>
+			{% else %}
+				<td>No Players</td>
+			{% endif %}
 	{% endfor %}
 	</ul>
 	{% else %}
 		<p>These are not the teams you are looking for...</p>
+</table>
 {% endif %}
+
 <a href="{% url 'create_team' %}">+ Create New Team</a><br />

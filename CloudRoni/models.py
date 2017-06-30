@@ -4,6 +4,7 @@ import datetime
 
 from django.db import models
 from django.utils import timezone
+from django.db.models import Sum
 
 # Create your models here.
 class Team(models.Model):
@@ -12,6 +13,10 @@ class Team(models.Model):
 
     def __str__(self):
         return self.team_name
+
+    def filter_team_points(self):
+        players = UserPlayer.objects.filter(player_team=self)
+        return players.aggregate(Sum('points_scored')).get('points_scored__sum', 0)
 
     def was_created_recently(self):
         return self.created_date >= timezone.now() - datetime.timedelta(days=1)
