@@ -17,17 +17,10 @@ class IndexView(generic.ListView):
 	def get_queryset(self):
 		"""Return all teams"""
 		return Team.objects.all().order_by('-created_date')
-    #teams_list = Team.objects.order_by('-created_date')[:10]
-    #context = {
-	#	'teams_list': teams_list,
-	#}
-    #return render(request, 'teams/index.html', context)
 
 class TeamView(generic.DetailView):
 	model = Team
 	template_name = 'teams/detail.html'
-	#team = get_object_or_404(Team, pk=team_id)
-	#return render(request, 'teams/detail.html', {'team': team}) 
 
 def players(request, team_id, player_id):
 	player = get_object_or_404(UserPlayer, pk=player_id)
