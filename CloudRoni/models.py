@@ -19,7 +19,7 @@ class Team(models.Model):
         return players.aggregate(Sum('points_scored')).get('points_scored__sum', 0)
 
     def was_created_recently(self):
-        return self.created_date >= timezone.now() - datetime.timedelta(days=1)
+        return self.created_date <= timezone.now() - datetime.timedelta(days=1)
 
 class UserPlayer(models.Model):
     HEAVY_USE = 'HU'

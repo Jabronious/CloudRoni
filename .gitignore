@@ -7,3 +7,5 @@ settings.py
 settings.pyc
 *.pyc
 __pycache__
+CloudRoni/models.pyc
+CloudRoni/urls.pyc
