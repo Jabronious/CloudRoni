@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+
 <h1>Teams</h1>
 {% if teams_list %}
 <table>
@@ -19,3 +22,5 @@
 {% endif %}
 
 <a href="{% url 'cloud_roni:create_team' %}">+ Create New Team</a><br />
+
+{% endblock content %}
