@@ -1,3 +1,7 @@
+{% extends 'base.html' %}
+
+{% block content%}
+
 <h1>{{ player }}</h1>
 <h3>Team: <span style='font-weight: normal'>{{ team.team_name }}</span></h3>
 
@@ -21,4 +25,6 @@
 {% endfor %}
 </table>
 
-<a href="{% url 'team' team.id %}">Back to {{ team.team_name }}</a>
+<a href="{% url 'cloud_roni:team' team.id %}">Back to {{ team.team_name }}</a>
+
+{% endblock content %}

@@ -1,8 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content%}
+
 <h1>{{ team.team_name }}</h1>
 <ul>
 {% for player in team.userplayer_set.all %}
-	<li><a href="{% url 'players' team.id player.id %}">{{ player }}</a></li>
+	<li><a href="{% url 'cloud_roni:players' team.id player.id %}">{{ player }}</a></li>
 {% endfor %}
 </ul>
-<a href="{% url 'create_player' team.id %}">Create New Player for {{ team.team_name }}</a><br />
-<a href="{% url 'index' %}">Back to All Teams</a>
+<a href="{% url 'cloud_roni:create_player' team.id %}">Create New Player for {{ team.team_name }}</a><br />
+<a href="{% url 'cloud_roni:index' %}">Back to All Teams</a>
+
+{% endblock content %}

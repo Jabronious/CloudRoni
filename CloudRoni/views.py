@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.template import loader
 from django.urls import reverse
 from django.views import generic
+from django.contrib.auth.decorators import login_required
 
 from .models import Team, UserPlayer, Point
 from .forms import UserPlayerForm, TeamForm, PointForm
@@ -22,6 +23,7 @@ class TeamView(generic.DetailView):
 	model = Team
 	template_name = 'teams/detail.html'
 
+@login_required
 def players(request, team_id, player_id):
 	player = get_object_or_404(UserPlayer, pk=player_id)
 	team = get_object_or_404(Team, pk=team_id)
@@ -53,6 +55,7 @@ def players(request, team_id, player_id):
 	}
 	return render(request, 'players/index.html', context)
 
+@login_required
 def create_player(request, team_id):
 	team = get_object_or_404(Team, pk=team_id)
 	form_class = UserPlayerForm
@@ -64,7 +67,7 @@ def create_player(request, team_id):
 			new_player = form.save(commit=False)
 			new_player.player_team = team
 			new_player.save()
-			return HttpResponseRedirect(reverse('team', args= (team.id,)))
+			return HttpResponseRedirect(reverse('cloud_roni:team', args= (team.id,)))
 		else:
 			return render(request, 'players/create.html', {
 					'form': form_class,
@@ -77,6 +80,7 @@ def create_player(request, team_id):
 				'team': team,
 				})
 
+@login_required
 def create_team(request):
 	form_class = TeamForm
 
@@ -87,7 +91,7 @@ def create_team(request):
 			new_team = form.save(commit=False)
 			new_team.created_date = timezone.now()
 			new_team = form.save()
-			return HttpResponseRedirect(reverse('index'))
+			return HttpResponseRedirect(reverse('cloud_roni:index'))
 		else:
 			return render(request, 'teams/create.html', {
 					'form': form_class,
