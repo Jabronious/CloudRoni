@@ -64,7 +64,7 @@ def create_player(request, team_id):
 			new_player = form.save(commit=False)
 			new_player.player_team = team
 			new_player.save()
-			return HttpResponseRedirect(reverse('team', args= (team.id,)))
+			return HttpResponseRedirect(reverse('cloud_roni:team', args= (team.id,)))
 		else:
 			return render(request, 'players/create.html', {
 					'form': form_class,
@@ -87,7 +87,7 @@ def create_team(request):
 			new_team = form.save(commit=False)
 			new_team.created_date = timezone.now()
 			new_team = form.save()
-			return HttpResponseRedirect(reverse('index'))
+			return HttpResponseRedirect(reverse('cloud_roni:index'))
 		else:
 			return render(request, 'teams/create.html', {
 					'form': form_class,
