@@ -35,6 +35,7 @@ def players(request, team_id, player_id):
 		if form.is_valid():
 			point = form.save(commit=False)
 			point.player = player
+			point.point_owner = request.user
 			point.save()
 			player.points_scored += point.point
 			player.save()

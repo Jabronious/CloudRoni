@@ -17,10 +17,12 @@
 <table>
     <th>Score</th>
     <th>Note</th>
+    <th>Created By</th>
 {% for score in points %}
     <tr> 
         <td>{{ score.point }}</td>
         <td>{{ score.note }}</td>
+        <td>{{ score.point_owner }}</td>
     </tr>
 {% endfor %}
 </table>
