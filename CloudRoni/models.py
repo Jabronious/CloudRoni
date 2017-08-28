@@ -5,11 +5,13 @@ import datetime
 from django.db import models
 from django.utils import timezone
 from django.db.models import Sum
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Team(models.Model):
     team_name = models.CharField(max_length=200)
     created_date = models.DateTimeField('date published')
+    team_owner = models.ForeignKey(User)
 
     def __str__(self):
         return self.team_name
@@ -60,3 +62,4 @@ class Point(models.Model):
         choices=POINT_CHOICES,
         default=0)
     note = models.TextField(max_length=200)
+    point_owner = models.ForeignKey(User)
