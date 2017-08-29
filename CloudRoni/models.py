@@ -7,6 +7,8 @@ from django.utils import timezone
 from django.db.models import Sum
 from django.contrib.auth.models import User
 
+import pdb
+
 # Create your models here.
 class Team(models.Model):
     team_name = models.CharField(max_length=200)
@@ -15,6 +17,9 @@ class Team(models.Model):
 
     def __str__(self):
         return self.team_name
+
+    def players_present(self):
+        return UserPlayer.objects.filter(player_team=self).count() > 0
 
     def filter_team_points(self):
         players = UserPlayer.objects.filter(player_team=self)
