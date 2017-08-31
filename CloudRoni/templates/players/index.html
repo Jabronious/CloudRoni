@@ -7,7 +7,7 @@
 
 <p style='font-weight: bold;'>Usage: <span style='font-weight: normal'>{{ player.get_usage_display }}</span></p>
 <p style='font-weight: bold;'>Points Scored: <span style='font-weight: normal'>{{ player.points_scored }}</span></p>
-<a href="{% url 'cloud_roni:update_player' player.id %}">Edit Player</a>
+<a href="{% url 'cloud_roni:update_player' player.id %}">Edit</a> - <a href="{% url 'cloud_roni:delete_player' player.id %}">Delete</a>
 
 <form role="form" action="" method="post">
 	{% csrf_token %}

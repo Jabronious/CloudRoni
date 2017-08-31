@@ -119,3 +119,11 @@ def update_player(request, player_id):
 		return render(request, 'players/index.html', context)
 		
 	return render(request, 'players/update.html', {'form': form,})
+
+@login_required
+def delete_player(request, player_id):
+	player = get_object_or_404(UserPlayer, pk=player_id)
+	team = player.player_team
+	player.delete()
+	
+	return HttpResponseRedirect(reverse('cloud_roni:team', args=(team.id,)))
