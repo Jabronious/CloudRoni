@@ -102,3 +102,28 @@ def create_team(request):
 	return render(request, 'teams/create.html', {
 				'form': form_class,
 				})
+
+@login_required
+def update_player(request, player_id):
+	player = get_object_or_404(UserPlayer, id=player_id)
+	form = UserPlayerForm(request.POST or None, instance=player)
+	
+	if form.is_valid():
+		form.save()
+		context = {
+			'player': player,
+			'team': player.player_team,
+			'points': Point.objects.filter(player=player),
+			'form': PointForm,
+		}
+		return render(request, 'players/index.html', context)
+		
+	return render(request, 'players/update.html', {'form': form,})
+
+@login_required
+def delete_player(request, player_id):
+	player = get_object_or_404(UserPlayer, pk=player_id)
+	team = player.player_team
+	player.delete()
+	
+	return HttpResponseRedirect(reverse('cloud_roni:team', args=(team.id,)))

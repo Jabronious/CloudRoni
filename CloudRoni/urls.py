@@ -1,4 +1,6 @@
 from django.conf.urls import url
+from django.core.urlresolvers import reverse_lazy
+from django.views.generic import RedirectView
 
 from . import views
 
@@ -13,4 +15,9 @@ urlpatterns = [
     url(r'^(?P<team_id>[0-9]+)/create_player/$', views.create_player, name='create_player'),
     # ex: CloudRoni/create_team
     url(r'^create_team/$', views.create_team, name='create_team'),
+    # ed: CloudRoni/update_player
+    url(r'^(?P<player_id>[0-9]+)/update_player/$', views.update_player, name='update_player'),
+    # ex: CloudRoni/delete_player
+    url(r'^(?P<player_id>[0-9]+)/delete_player/$', views.delete_player, name='delete_player'),
+   
 ]
