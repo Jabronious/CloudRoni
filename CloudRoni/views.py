@@ -41,10 +41,10 @@ def players(request, team_id, player_id):
 def add_point(request, player_id):
 	form_class = PointForm
 	player = get_object_or_404(UserPlayer, pk=player_id)
-	
+
 	if request.method == "POST":
 		form = form_class(request.POST, request.FILES)
-		
+
 		if form.is_valid():
 			point = form.save(commit=False)
 			point.player = player
@@ -60,7 +60,7 @@ def add_point(request, player_id):
 				'form': form_class,
 				'error_message': "Note is required",
 			})
-	
+
 	context = {
 		'player': player,
 		'team': player.player_team,
