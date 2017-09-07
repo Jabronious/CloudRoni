@@ -1,6 +1,6 @@
 from django.http import Http404, HttpResponseRedirect, HttpResponse
-from django.shortcuts import get_object_or_404, render, redirect
-from django.template import loader
+from django.shortcuts import get_object_or_404, render, redirect, render_to_response
+from django.template import loader, RequestContext
 from django.urls import reverse
 from django.views import generic
 from django.contrib.auth.decorators import login_required
@@ -28,6 +28,19 @@ def players(request, team_id, player_id):
 	player = get_object_or_404(UserPlayer, pk=player_id)
 	team = get_object_or_404(Team, pk=team_id)
 	form_class = PointForm
+
+	context = {
+		'player': player,
+		'team': team,
+		'points': Point.objects.filter(player=player),
+		'form': form_class,
+	}
+	return render(request, 'players/index.html', context)
+
+@login_required
+def add_point(request, player_id):
+	form_class = PointForm
+	player = get_object_or_404(UserPlayer, pk=player_id)
 	
 	if request.method == "POST":
 		form = form_class(request.POST, request.FILES)
@@ -40,21 +53,21 @@ def players(request, team_id, player_id):
 			player.points_scored += point.point
 			player.save()
 		else:
-			return render(request, 'players/idex.html', {
+			return render(request, 'players/index.html', {
 				'player': player,
-				'team': team,
+				'team': player.player_team,
 				'points': Point.objects.filter(player=player),
 				'form': form_class,
 				'error_message': "Note is required",
 			})
-			
+	
 	context = {
 		'player': player,
-		'team': team,
+		'team': player.player_team,
 		'points': Point.objects.filter(player=player),
 		'form': form_class,
 	}
-	return render(request, 'players/index.html', context)
+	return HttpResponseRedirect(reverse('cloud_roni:players', args=(player.player_team.id, player.id)))
 
 @login_required
 def create_player(request, team_id):
