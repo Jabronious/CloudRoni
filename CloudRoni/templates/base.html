@@ -1,15 +1,20 @@
 {% load static %}
 <script src="{% static 'CloudRoni/js/vendor/jquery/jquery.js' %}"></script>
+<link rel="stylesheet" href="{% static 'CloudRoni/css/base.css' %}">
 
-<p>
+<div id='nav-bar'>
     <a href="{% url 'cloud_roni:index' %}">Teams</a>
+    <div class='login'>
     {% if user.is_authenticated %}
-        Hello, {{ user.username }}
+        <span>Hello, {{ user.username }}</span>
         <a href="{% url 'users:logout' %}">Log out</a>
     {% else %}
         <a href="{% url 'users:login' %}">Log in</a>
         <a href="{% url 'users:register' %}">Register</a>
     {% endif %}
-</p>
+    </div>
+</div>
 
+<div id='body'>
 {% block content %}{% endblock content %}
+</div>
