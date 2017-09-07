@@ -17,7 +17,9 @@ urlpatterns = [
     url(r'^create_team/$', views.create_team, name='create_team'),
     # ed: CloudRoni/update_player
     url(r'^(?P<player_id>[0-9]+)/update_player/$', views.update_player, name='update_player'),
-    # ex: CloudRoni/delete_player
+    # ex: CloudRoni/55/delete_player
     url(r'^(?P<player_id>[0-9]+)/delete_player/$', views.delete_player, name='delete_player'),
+    # ex: CloudRoni/55/add_point
+    url(r'^(?P<player_id>[0-9]+)/add_point/$', views.add_point, name='add_point'),
    
 ]
