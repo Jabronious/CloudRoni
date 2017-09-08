@@ -4,11 +4,44 @@ from django.utils import timezone
 from django.test import TestCase
 
 from .models import Team, UserPlayer, Point
+from django.contrib.auth.models import User
+import pdb
 
 class TeamModelTests(TestCase):
-    
+
     def test_was_created_recently(self):
+        user = User(username='jr.merryman', password='rabble')
+        user.save()
         time = timezone.now() + datetime.timedelta(days = 30)
-        future_team = Team(created_date = time)
-        
-        self.assertIs(future_team.was_created_recently(), False)
+        team = Team(created_date=time, id=1, team_owner=user)
+        team.save()
+
+        self.assertIs(team.was_created_recently(), False)
+
+    def test_team_has_players(self):
+        user = User(username='jr.merryman', password='rabble')
+        user.save()
+        team = Team(created_date=timezone.now(), id=1, team_owner=user)
+        team.save()
+        player = UserPlayer(player_team=team, id=1)
+        player.save()
+
+        self.assertIs(team.players_present(), True)
+
+    def test_team_has_no_players(self):
+        user = User(username='jr.merryman', password='rabble')
+        user.save()
+        team = Team(created_date=timezone.now(), id=1, team_owner=user)
+        team.save()
+
+        self.assertIs(team.players_present(), False)
+
+    def test_filter_points(self):
+        user = User(username='jr.merryman', password='rabble')
+        user.save()
+        team = Team(created_date=timezone.now(), id=1, team_owner=user)
+        team.save()
+        player = UserPlayer(player_team=team, id=1, points_scored=1)
+        player.save()
+
+        self.assertIs(team.filter_team_points(), 1)
