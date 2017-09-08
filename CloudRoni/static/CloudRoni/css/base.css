@@ -10,19 +10,39 @@
     float: right;
 }
 
+.nav-item {
+    margin: 10px;
+    float: left;
+}
+
 .login {
     float: right;
     color: #FFF;
     margin-right: 5px;
+    height: 100%;
+    max-width: 25%;
+    min-width: 165px;
 }
 
 .login > span {
-    margin-right: 5px;
+    margin: 10px 5px 10px 0;
+    float: left;
 }
 
-#nav-bar > a, .login > a {
+#nav-bar > a {
+    float: left;
+    height: 100%;
+    width: 5%;
     color: #FFF;
     text-decoration: none;
+    margin-left: 5px;
+}
+
+.login > a {
+    color: #FFF;
+    text-decoration: none;
+    float: left;
+    height: 100%;
 }
 
 body {
