@@ -2,8 +2,11 @@ import datetime
 
 from django.utils import timezone
 from django.test import TestCase
+from django.core.urlresolvers import resolve
+from django.http import HttpRequest
 
 from .models import Team, UserPlayer, Point
+from . import views
 from django.contrib.auth.models import User
 import pdb
 
@@ -45,3 +48,15 @@ class TeamModelTests(TestCase):
         player.save()
 
         self.assertIs(team.filter_team_points(), 1)
+
+class CloudRoniViewsTests(TestCase):
+    
+    def test_root_url_resolves_to_teams(self):
+        found = resolve('/')
+        self.assertEqual(found.url_name, 'index')
+
+    #def test_teams_page_has_correct_info(self):
+    #    request = HttpRequest()
+    #    pdb.set_trace()
+    #    response = views.IndexView(request)
+        
