@@ -51,12 +51,41 @@ class TeamModelTests(TestCase):
 
 class CloudRoniViewsTests(TestCase):
     
+    def setUp(self):
+        self.home_page_request = self.client.get('/')
+        user = User.objects.create(username='jab')
+        user.set_password('1234')
+        user.save()
+        self.new_user = user
+    
+    def login_is_required(self):
+        self.client.login(username='jab',password='1234')
+    
     def test_root_url_resolves_to_teams(self):
         found = resolve('/')
         self.assertEqual(found.url_name, 'index')
 
-    #def test_teams_page_has_correct_info(self):
-    #    request = HttpRequest()
-    #    pdb.set_trace()
-    #    response = views.IndexView(request)
+    def test_teams_page_has_correct_info_with_no_teams(self):
+        content = self.home_page_request.content
+        self.assertIn('These are not the teams you are looking for...', content)
         
+    def test_teams_page_has_correct_info_with_teams(self):
+        Team(team_name='jabs', team_owner_id=1, created_date=timezone.now()).save()
+        reload_home_page = self.client.get('/')
+        self.assertIn('<a href="/1/team/">jabs</a>', reload_home_page.content)
+    
+    def test_teams_page(self):
+        team = Team(team_name='jabs', team_owner_id=1, created_date=timezone.now())
+        team.save()
+        UserPlayer(player_team=team, player_first_name='joe', player_last_name='momma').save()
+        team_page_request = self.client.get("/" + str(team.id) + "/team/")
+        self.assertIn('joe momma', team_page_request.content)
+        
+    def test_detailed_player_view(self):
+        team = Team(team_name='jabs', team_owner_id=1, created_date=timezone.now())
+        team.save()
+        player = UserPlayer(player_team=team, player_first_name='joe', player_last_name='momma')
+        player.save()
+        self.login_is_required()
+        player_page_request = self.client.get("/" + str(player.player_team.id) + "/players/" + str(player.id) + "/")
+        self.assertIn('joe momma', player_page_request.content)
