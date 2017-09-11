@@ -1,3 +1,4 @@
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 <form role="form" action="{% url 'cloud_roni:add_point' player.id %}" method="post">
 	{% csrf_token %}
 	{{ form.as_p }}
