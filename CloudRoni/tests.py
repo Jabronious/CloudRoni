@@ -7,6 +7,7 @@ from django.http import HttpRequest
 
 from .models import Team, UserPlayer, Point
 from . import views
+from .forms import UserPlayerForm, TeamForm, PointForm
 from django.contrib.auth.models import User
 import pdb
 
@@ -58,8 +59,16 @@ class CloudRoniViewsTests(TestCase):
         user.save()
         self.new_user = user
     
-    def login_is_required(self):
+    def login_user(self):
         self.client.login(username='jab',password='1234')
+        
+    def set_up_team_with_players(self):
+        team = Team(team_name='jabs', team_owner_id=1, created_date=timezone.now())
+        team.save()
+        self.team = team
+        player = UserPlayer(player_team=team, player_first_name='joe', player_last_name='momma')
+        player.save()
+        self.player = player
     
     def test_root_url_resolves_to_teams(self):
         found = resolve('/')
@@ -82,10 +91,27 @@ class CloudRoniViewsTests(TestCase):
         self.assertIn('joe momma', team_page_request.content)
         
     def test_detailed_player_view(self):
-        team = Team(team_name='jabs', team_owner_id=1, created_date=timezone.now())
-        team.save()
-        player = UserPlayer(player_team=team, player_first_name='joe', player_last_name='momma')
-        player.save()
-        self.login_is_required()
-        player_page_request = self.client.get("/" + str(player.player_team.id) + "/players/" + str(player.id) + "/")
+        self.set_up_team_with_players()
+        self.login_user()
+        player_page_request = self.client.get("/" + str(self.player.player_team.id) + "/players/" + str(self.player.id) + "/")
         self.assertIn('joe momma', player_page_request.content)
+
+    def test_add_point(self):
+        self.set_up_team_with_players()
+        self.login_user()
+        form = PointForm({
+            'point': Point.ONE,
+            'note': 'Hey, I am a note',
+        })
+        
+        self.assertTrue(form.is_valid())
+        
+        submitted_point = form.save(commit=False)
+        submitted_point.player = self.player
+        submitted_point.point_owner = self.new_user
+        submitted_point.save()
+        
+        self.assertEqual(submitted_point.player, self.player)
+        self.assertEqual(submitted_point.point, Point.ONE)
+        self.assertEqual(submitted_point.note, "Hey, I am a note")
+        self.assertEqual(submitted_point.point_owner, self.new_user)
