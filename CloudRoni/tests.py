@@ -153,6 +153,23 @@ class CloudRoniViewsTests(TestCase):
 
         self.assertTrue('Invalid Information!' in response.content)
 
+    def test_update_player_view(self):
+        self.login_user()
+        self.set_up_team_with_players()
+        response = self.client.get('/' + str(self.player.id) + '/update_player/')
+
+        self.assertTrue('joe' in response.content)
+        self.assertTrue('momma' in response.content)
+        self.assertTrue('Not Using' in response.content)
+
+    def test_delete_player_view(self):
+        self.login_user()
+        self.set_up_team_with_players()
+        player_count = UserPlayer.objects.count()
+        response = self.client.post('/' + str(self.player.id) + '/delete_player/')
+
+        self.assertEqual(UserPlayer.objects.count(), player_count - 1)
+        self.assertRedirects(response, expected_url=reverse('cloud_roni:team', args=(self.team.id,)))
 
 class PointFormTests(TestCase):
 
