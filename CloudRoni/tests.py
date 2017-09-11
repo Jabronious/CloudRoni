@@ -129,6 +129,14 @@ class CloudRoniViewsTests(TestCase):
                     })
         self.assertEqual(UserPlayer.objects.count(), player_count + 1)
 
+    def test_create_player_view_with_error(self):
+        self.set_up_team_with_players()
+        self.login_user()
+        player_count = UserPlayer.objects.count()
+        response = self.client.post('/' + str(self.team.id) + '/create_player/')
+
+        self.assertTrue('Invalid Information!' in response.content)
+
 class PointFormTests(TestCase):
 
     def setUp(self):
