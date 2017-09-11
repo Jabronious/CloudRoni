@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.test import TestCase
 from django.core.urlresolvers import resolve
 from django.http import HttpRequest
+from django.urls import reverse
 
 from .models import Team, UserPlayer, Point
 from . import views
@@ -122,12 +123,14 @@ class CloudRoniViewsTests(TestCase):
         self.login_user()
         player_count = UserPlayer.objects.count()
         response = self.client.post('/' + str(self.team.id) + '/create_player/',
-                    {
-                        'usage': UserPlayer.HEAVY_USE,
-                        'player_first_name': 'Jarrod',
-                        'player_last_name': 'Marryweather',
-                    })
+            {
+                'usage': UserPlayer.HEAVY_USE,
+                'player_first_name': 'Jarrod',
+                'player_last_name': 'Marryweather',
+            })
+
         self.assertEqual(UserPlayer.objects.count(), player_count + 1)
+        self.assertRedirects(response, expected_url=reverse('cloud_roni:team', args=(self.team.id,)))
 
     def test_create_player_view_with_error(self):
         self.set_up_team_with_players()
@@ -136,6 +139,20 @@ class CloudRoniViewsTests(TestCase):
         response = self.client.post('/' + str(self.team.id) + '/create_player/')
 
         self.assertTrue('Invalid Information!' in response.content)
+
+    def test_create_team_view(self):
+        self.login_user()
+        response = self.client.post('/create_team/', {'team_name': 'Jabrones', 'team_owner': str(self.new_user.id)})
+
+        self.assertEqual(Team.objects.count(), 1)
+        self.assertRedirects(response, expected_url=reverse('cloud_roni:index'))
+
+    def test_create_team_view_with_error(self):
+        self.login_user()
+        response = self.client.post('/create_team/')
+
+        self.assertTrue('Invalid Information!' in response.content)
+
 
 class PointFormTests(TestCase):
 
