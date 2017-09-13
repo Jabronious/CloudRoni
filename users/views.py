@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render, redirect, render_to_response
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.forms import UserCreationForm
+from .forms import UserUpdateForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 def logout_view(request):
     logout(request)
@@ -26,3 +29,18 @@ def register(request):
 
     context = {'form': form}
     return render(request, 'users/register.html', context)
+
+@login_required
+def update_account(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    form = UserUpdateForm(request.POST or None, instance=user)
+
+    context = {
+        'user': user,
+        'form': form,
+    }
+
+    if form.is_valid():
+        form.save()
+
+    return render(request, 'users/account.html', context)

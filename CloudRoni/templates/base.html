@@ -7,7 +7,7 @@
     <a href="{% url 'cloud_roni:index' %}"><span class='nav-item'>Teams<span></a>
     <div class='login'>
     {% if user.is_authenticated %}
-        <span>Hello, {{ user.username }}</span>
+        <span>Hello, <a href="{% url 'users:account' user.id %}">{{ user.username }}</a></span>
         <a href="{% url 'users:logout' %}"><span class='nav-item'>Log out</span></a>
     {% else %}
         <a href="{% url 'users:login' %}"><span class='nav-item'>Log in</span></a>
