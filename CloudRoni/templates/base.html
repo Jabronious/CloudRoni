@@ -16,6 +16,8 @@
     </div>
 </div>
 
+{% if user.email == '' %}<p><strong>Add an <a href="{% url 'users:account' user.id %}">email</a> to receive notifications</strong></p>{% endif %}
+
 <div id='body'>
 {% block content %}{% endblock content %}
 </div>
