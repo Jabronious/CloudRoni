@@ -4,6 +4,8 @@ from django.template import loader, RequestContext
 from django.urls import reverse
 from django.views import generic
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from django.contrib.auth.models import User
 
 from .models import Team, UserPlayer, Point
 from .forms import UserPlayerForm, TeamForm, PointForm
@@ -52,6 +54,7 @@ def add_point(request, player_id):
 			point.save()
 			player.points_scored += point.point
 			player.save()
+			build_and_send_email_alert(player, point)
 		else:
 			return render(request, 'players/index.html', {
 				'player': player,
@@ -140,3 +143,21 @@ def delete_player(request, player_id):
 	player.delete()
 	
 	return HttpResponseRedirect(reverse('cloud_roni:team', args=(team.id,)))
+
+def build_and_send_email_alert(player, point):
+	subject = str(player) + ' scored a point!'
+	message = (str(point.point_owner) + ' has added a point for ' 
+		+ str(player.player_first_name) + ' ' + str(player.player_last_name) + ': ' + str(point.point))
+
+	email_address = player.player_team.team_owner.email
+	
+	if email_address == '':
+		return
+
+	send_mail(
+	    subject,
+	    message,
+	    'cloud.roni.alerts@gmail.com',
+	    [email_address],
+	    fail_silently=False,
+	)
