@@ -6,17 +6,17 @@ from django.views import generic
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 from .models import Team, UserPlayer, Point
 from .forms import UserPlayerForm, TeamForm, PointForm
-from django.utils import timezone
 
 import pdb
 
 class IndexView(generic.ListView):
 	template_name = 'teams/index.html'
 	context_object_name = 'teams_list'
-	
+
 	def get_queryset(self):
 		"""Return all teams"""
 		return Team.objects.all().order_by('-created_date')
@@ -123,7 +123,7 @@ def create_team(request):
 def update_player(request, player_id):
 	player = get_object_or_404(UserPlayer, id=player_id)
 	form = UserPlayerForm(request.POST or None, instance=player)
-	
+
 	if form.is_valid():
 		form.save()
 		context = {
@@ -133,7 +133,7 @@ def update_player(request, player_id):
 			'form': PointForm,
 		}
 		return render(request, 'players/index.html', context)
-		
+
 	return render(request, 'players/update.html', {'form': form,})
 
 @login_required
@@ -141,7 +141,7 @@ def delete_player(request, player_id):
 	player = get_object_or_404(UserPlayer, pk=player_id)
 	team = player.player_team
 	player.delete()
-	
+
 	return HttpResponseRedirect(reverse('cloud_roni:team', args=(team.id,)))
 
 def build_and_send_email_alert(player, point):
@@ -150,7 +150,7 @@ def build_and_send_email_alert(player, point):
 		+ str(player.player_first_name) + ' ' + str(player.player_last_name) + ': ' + str(point.point))
 
 	email_address = player.player_team.team_owner.email
-	
+
 	if email_address == '':
 		return
 
