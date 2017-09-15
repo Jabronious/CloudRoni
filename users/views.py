@@ -37,7 +37,7 @@ def update_account(request, user_id):
 
     if request.user.is_authenticated() and request.user.id == user.id:
         form = UserUpdateForm(request.POST or None, instance=user)
-    
+
         context = {
             'user': user,
             'form': form,
@@ -45,7 +45,7 @@ def update_account(request, user_id):
     
         if form.is_valid():
             form.save()
-    
+
         return render(request, 'users/account.html', context)
     else:
         raise PermissionDenied
