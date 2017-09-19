@@ -68,3 +68,6 @@ class Point(models.Model):
         default=0)
     note = models.TextField(max_length=200)
     point_owner = models.ForeignKey(User)
+    
+    def __str__(self):
+        return str(self.point)

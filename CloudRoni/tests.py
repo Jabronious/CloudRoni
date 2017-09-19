@@ -5,6 +5,7 @@ from django.test import TestCase
 from django.core.urlresolvers import resolve
 from django.http import HttpRequest
 from django.urls import reverse
+from django.core import mail
 
 from .models import Team, UserPlayer, Point
 from . import views
@@ -57,6 +58,7 @@ class CloudRoniViewsTests(TestCase):
         self.home_page_request = self.client.get('/')
         user = User.objects.create(username='jab')
         user.set_password('1234')
+        user.email = 'test_email@gmail.com'
         user.save()
         self.new_user = user
 
@@ -103,20 +105,21 @@ class CloudRoniViewsTests(TestCase):
         self.assertIn('joe momma', player_page_request.content)
 
 
-    def test_add_add_point_view_with_error(self):
+    def test_add_point_view_with_error(self):
         self.set_up_team_with_players()
         self.login_user()
         response = self.client.post("/" + str(self.player.id) + "/add_point/", {'player_id': self.player.id})
 
         self.assertTrue('Note is required' in response.content)
 
-    def test_add_add_point_view_without_error(self):
+    def test_add_point_view_without_error(self):
         point_count = Point.objects.count()
         self.set_up_team_with_players()
         self.login_user()
         response = self.client.post("/" + str(self.player.id) + "/add_point/", {'note': "I am a note", 'point': Point.ONE})
 
         self.assertEqual(Point.objects.count(), point_count + 1)
+        self.assertEqual(len(mail.outbox), 1)
 
     def test_create_player_view(self):
         self.set_up_team_with_players()
