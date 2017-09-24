@@ -1,5 +1,4 @@
 #nav-bar {
-    float: left;
     width: 100%;
     background-color: #3CC47C;
     height: 40px;
@@ -50,5 +49,8 @@ body {
 }
 
 #body {
-    float: left;
+    width: 90%;
+    margin: auto;
+    margin-top: 45px;
+    background-color: #fff5e6;
 }

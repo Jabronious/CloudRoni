@@ -1,26 +1,31 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load fontawesome %}
+
 {% block content %}
+<link rel="stylesheet" href="{% static 'CloudRoni/css/team.css' %}">
 
-<h1>Teams</h1>
-{% if teams_list %}
-<table>
-	<th>Team Name</th>
-	<th>Total Points</th>
-	{% for team in teams_list %}
-		<tr>
-			<td><a href="{% url 'cloud_roni:team' team.id %}">{{ team.team_name }}</a></td>
-			{% if team.players_present %}
-				<td>{{ team.filter_team_points }}</td>
-			{% else %}
-				<td>No Players</td>
-			{% endif %}
-	{% endfor %}
-	</ul>
-	{% else %}
-		<p>These are not the teams you are looking for...</p>
-</table>
+<div id='team-table'>
+	<h1 class='page-header'>Teams</h1>
+	<a id='create-team-link' href="{% url 'cloud_roni:create_team' %}">{% fontawesome_icon 'plus-circle' %} Create New Team</a>
+	{% if teams_list %}
+	<table>
+		<th>Team Name</th>
+		<th>Total Points</th>
+		{% for team in teams_list %}
+			<tr>
+				<td><a href="{% url 'cloud_roni:team' team.id %}">{{ team.team_name }}</a></td>
+				{% if team.players_present %}
+					<td>{{ team.filter_team_points }}</td>
+				{% else %}
+					<td>No Players</td>
+				{% endif %}
+		{% endfor %}
+		</ul>
+		{% else %}
+			<p>These are not the teams you are looking for...</p>
+	</table>
+</div>
 {% endif %}
-
-<a href="{% url 'cloud_roni:create_team' %}">+ Create New Team</a><br />
 
 {% endblock content %}
