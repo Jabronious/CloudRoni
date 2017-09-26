@@ -59,6 +59,7 @@ body {
 #body {
     width: 90%;
     margin: auto;
+    padding: 15px 0;
     background-color: #fff5e6;
 }
 
@@ -73,9 +74,7 @@ body {
     margin-top: 10px;
 }
 
-#footer{
-    width: 90%;
-    margin: auto;
-    height: 20px;
-    background-color: #fff5e6
+.creation-button {
+    color: #3CC47C;
+    text-decoration: none;
 }

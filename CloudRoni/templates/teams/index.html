@@ -7,7 +7,7 @@
 
 <div id='team-table'>
 	<h1 class='page-header'>Teams</h1>
-	<a id='create-team-link' href="{% url 'cloud_roni:create_team' %}">{% fontawesome_icon 'plus-circle' %} Create New Team</a>
+	<a id='create-team-link' class='creation-button' href="{% url 'cloud_roni:create_team' %}">{% fontawesome_icon 'plus-circle' %} Create New Team</a>
 	{% if teams_list %}
 	<table>
 		<th>Team Name</th>

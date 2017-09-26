@@ -1,14 +1,26 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load fontawesome %}
 
 {% block content%}
+<link rel="stylesheet" href="{% static 'CloudRoni/css/team.css' %}">
 
-<h1>{{ team.team_name }}</h1>
-<ul>
-{% for player in team.userplayer_set.all %}
-	<li><a href="{% url 'cloud_roni:players' team.id player.id %}">{{ player }}</a> - {{ player.points_scored }} points scored</li>
-{% endfor %}
-</ul>
-<a href="{% url 'cloud_roni:create_player' team.id %}">Create New Player for {{ team.team_name }}</a><br />
-<a href="{% url 'cloud_roni:index' %}">Back to All Teams</a>
+<div id='player-table'>
+    <h1 class='page-header'>{{ team.team_name }}</h1>
+    <a class='creation-button' href="{% url 'cloud_roni:create_player' team.id %}">{% fontawesome_icon 'plus-circle' %}Create New Player for {{ team.team_name }}</a>
+    <table>
+    	<th>Player Name</th>
+    	<th>Points Scored</th>
+    	<th>Usage</th>
+    	{% for player in team.userplayer_set.all %}
+    		<tr>
+    			<td><a href="{% url 'cloud_roni:players' team.id player.id %}">{{ forloop.counter }}. {{ player }}</a></td>
+    			<td>{{ player.points_scored }}</td>
+    			<td class='{{ player.usage }}'>{{ player.usage }}</td>
+    		</tr>
+    	{% endfor %}
+    </table>
+    <a href="{% url 'cloud_roni:index' %}">Back to All Teams</a>
+</div>
 
 {% endblock content %}
