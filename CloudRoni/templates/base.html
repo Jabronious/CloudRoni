@@ -5,6 +5,7 @@
 <script src="{% static 'CloudRoni/js/vendor/jquery/jquery.js' %}"></script>
 <script src="{% static 'CloudRoni/js/base.js' %}"></script>
 <link rel="stylesheet" href="{% static 'CloudRoni/css/base.css' %}">
+<link rel="stylesheet" href="{% static 'CloudRoni/css/table.css' %}">
 
 <div id='nav-bar'>
     <a href="{% url 'cloud_roni:index' %}"><span class='nav-item'>Teams<span></a>
@@ -19,8 +20,11 @@
     </div>
 </div>
 
-{% if user.email == '' %}<p><strong>Add an <a href="{% url 'users:account' user.id %}">email</a> to receive notifications</strong></p>{% endif %}
+{% if user.email == '' %}<p id='add-email-alert'><strong>Add an <a href="{% url 'users:account' user.id %}">email</a> to receive notifications</strong></p>{% endif %}
 
 <div id='body'>
 {% block content %}{% endblock content %}
+</div>
+
+<div id='footer'>
 </div>

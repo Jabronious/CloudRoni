@@ -1,8 +1,13 @@
 #nav-bar {
-    float: left;
     width: 100%;
     background-color: #3CC47C;
     height: 40px;
+}
+
+/*Removes bottom margin causing an issue with
+the footer.*/
+form {
+    margin-bottom: 0;
 }
 
 #nav-bar > span {
@@ -47,8 +52,30 @@
 
 body {
     margin: 0;
+    background-color: #e8e8e8;
+    font-family: Arial,"Helvetica Neue",Helvetica,sans-serif;
 }
 
 #body {
-    float: left;
+    width: 90%;
+    margin: auto;
+    background-color: #fff5e6;
+}
+
+.page-header {
+    margin: 0 0 5px 0;
+    text-align: center;
+}
+
+#add-email-alert {
+    margin: auto;
+    width: 280px;
+    margin-top: 10px;
+}
+
+#footer{
+    width: 90%;
+    margin: auto;
+    height: 20px;
+    background-color: #fff5e6
 }
