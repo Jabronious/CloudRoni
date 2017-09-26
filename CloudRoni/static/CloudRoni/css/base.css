@@ -61,6 +61,7 @@ body {
     margin: auto;
     padding: 15px 0;
     background-color: #fff5e6;
+    overflow: hidden;
 }
 
 .page-header {
