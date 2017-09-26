@@ -20,12 +20,12 @@
 				{% else %}
 					<td>No Players</td>
 				{% endif %}
+			</tr>
 		{% endfor %}
-		</ul>
-		{% else %}
-			<p>These are not the teams you are looking for...</p>
+	{% else %}
+		<p>These are not the teams you are looking for...</p>
+{% endif %}
 	</table>
 </div>
-{% endif %}
 
 {% endblock content %}

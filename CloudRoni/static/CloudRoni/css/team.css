@@ -7,3 +7,9 @@
     color: #3CC47C;
     text-decoration: none;
 }
+
+td > a {
+    color: inherit;
+    font-weight: bold;
+    font-size: 22px;
+}
