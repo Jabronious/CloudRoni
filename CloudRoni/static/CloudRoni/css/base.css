@@ -79,3 +79,18 @@ body {
     color: #3CC47C;
     text-decoration: none;
 }
+
+#main-logo {
+    width: 50px;
+    float: left;
+    margin: 3px 0 0 5px;
+}
+
+.image-container {
+    margin: auto;
+}
+
+#powered-by {
+    width: 155px;
+    margin-top: 10px;
+}
