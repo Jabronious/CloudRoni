@@ -2,3 +2,9 @@
     width: 50%;
     float: left;
 }
+
+#points-table {
+    width: 615px;
+    margin: auto;
+    margin-top: 15px;
+}
