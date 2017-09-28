@@ -8,3 +8,29 @@
     margin: auto;
     margin-top: 15px;
 }
+
+form {
+    width: 615px;
+    margin: auto;
+}
+
+#player-header {
+    margin-left: 15px;
+    float: left;
+}
+
+.inner-details {
+    clear: left;
+    margin-left: 25px;
+}
+
+.header {
+    position: relative;
+    min-height: 60px;
+}
+
+.icons {
+    bottom: 7px;
+    position: absolute;
+    left: 200px;
+}
