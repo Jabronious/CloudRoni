@@ -20,7 +20,9 @@
     		</tr>
     	{% endfor %}
     </table>
-    <a href="{% url 'cloud_roni:index' %}">Back to All Teams</a>
+    <div class='back-link'>
+        <a href="{% url 'cloud_roni:index' %}">Back to All Teams</a>
+    </div>
 </div>
 
 {% endblock content %}

@@ -8,6 +8,9 @@
 <link rel="stylesheet" href="{% static 'CloudRoni/css/table.css' %}">
 
 <div id='nav-bar'>
+    <div id='main-logo' class='image-container'>
+        <img src="{% static 'CloudRoni/img/logo_small.png' %}">
+    </div>
     <a href="{% url 'cloud_roni:index' %}"><span class='nav-item'>Teams<span></a>
     <div class='login'>
     {% if user.is_authenticated %}
@@ -27,4 +30,8 @@
 </div>
 
 <div id='footer'>
+</div>
+
+<div id='powered-by' class='image-container'>
+    <img id='power-by-logo' src="{% static 'CloudRoni/img/power_by_logo.png' %}">
 </div>

@@ -4,18 +4,30 @@
 
 {% block content%}
 <script src="{% static 'CloudRoni/js/player.js' %}"></script>
+<link rel="stylesheet" href="{% static 'CloudRoni/css/players.css' %}">
 
-<h1 style='margin-bottom: 0'>{{ player }}</h1>
-<a href="{% url 'cloud_roni:update_player' player.id %}">{% fontawesome_icon 'pencil' color='#3CC47C' %}</a> <a href="{% url 'cloud_roni:delete_player' player.id %}">{% fontawesome_icon 'trash' color='#3CC47C' %}</a>
-<h3>Team: <span style='font-weight: normal'>{{ team.team_name }}</span></h3>
-
-<p style='font-weight: bold;'>Usage: <span style='font-weight: normal'>{{ player.get_usage_display }}</span></p>
-<p style='font-weight: bold;'>Points Scored: <span style='font-weight: normal'>{{ player.points_scored }}</span></p>
+<div id='player-info'>
+    <div class='header'>
+        <h1 id='player-header'>{{ player }}</h1>
+        <div class='icons'>    
+            <a class='update-icon' href="{% url 'cloud_roni:update_player' player.id %}">{% fontawesome_icon 'pencil' color='#3CC47C' %}</a> 
+            <a class='delete-icon' href="{% url 'cloud_roni:delete_player' player.id %}">{% fontawesome_icon 'trash' color='#3CC47C' %}</a>
+        </div>
+    </div>
+    <div class='inner-details'>
+        <h3>Team: <span style='font-weight: normal'>{{ team.team_name }}</span></h3>
+        
+        <p style='font-weight: bold;'>Usage: <span style='font-weight: normal'>{{ player.get_usage_display }}</span></p>
+        <p style='font-weight: bold;'>Points Scored: <span style='font-weight: normal'>{{ player.points_scored }}</span></p>
+    </div>    
+    <div class='back-link'>
+        <a href="{% url 'cloud_roni:team' team.id %}">Back to {{ team.team_name }}</a>
+    </div>
+</div>
 
 <div id="points">
 {% include "players/_points.html" %}
 </div>
 
-<a href="{% url 'cloud_roni:team' team.id %}">Back to {{ team.team_name }}</a>
 
 {% endblock content %}
