@@ -1,0 +1,17 @@
+#login-form-container {    
+    width: 440px;
+    margin: auto;
+}
+
+#login-form-container > p:first {
+    width: 215px;
+    margin: 0;
+    margin-right: 10px;
+    float: left;
+}
+
+#login-form-container > p:second {
+    width: 215px;
+    margin: 0;
+    float: left;
+}
