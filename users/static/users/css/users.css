@@ -36,3 +36,12 @@
     width: 265px;
     margin: 10px auto;
 }
+
+#register-form {
+    float: left;
+    margin-left: 370px;
+}
+
+#register-form > ul {
+    font-size: 12px;
+}
