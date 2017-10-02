@@ -134,7 +134,7 @@ def update_player(request, player_id):
 		}
 		return render(request, 'players/index.html', context)
 
-	return render(request, 'players/update.html', {'form': form,})
+	return render(request, 'players/update.html', {'form': form, 'team': player.player_team})
 
 @login_required
 def delete_player(request, player_id):

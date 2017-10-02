@@ -2,11 +2,11 @@
 
 {% block content%}
 
-<h1>{{ team.team_name }}</h1>
+<h1 class='create-header'>{{ team.team_name }}</h1>
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-<form role="form" action="" method="post">
+<form role="form" class='create-form' action="" method="post">
 	{% csrf_token %}
 	{{ form.as_p }}
 <button type="submit">Update</button>
