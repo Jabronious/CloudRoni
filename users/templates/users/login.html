@@ -1,16 +1,21 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load fontawesome %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'users/css/users.css' %}">
 
   {% if form.errors %}
   <p>Your username or password is incorrect</p>
   {% endif %}
   
-  <form method='post' action "{% url 'users:login' %}">
+  <form method='post' id='login-form-container' action "{% url 'users:login' %}">
     {% csrf_token %}
     {{ form.as_p }}
     
-    <button name='submit'>Log in</button>
+    <div class='button-holder'>
+      <button name='submit'>Log in</button>
+    </div>
     <input type="hidden" name="next" value="{% url 'cloud_roni:index' %}" />
   </form>
 {% endblock content %}

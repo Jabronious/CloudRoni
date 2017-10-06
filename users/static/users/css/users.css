@@ -1,0 +1,47 @@
+#login-form-container {    
+    width: 440px;
+    margin: auto;
+}
+
+#login-form-container > p:first-of-type {
+    width: 215px;
+    margin: 0;
+    margin-right: 10px;
+    float: left;
+}
+
+#login-form-container > p:last-of-type {
+    width: 215px;
+    margin: 0;
+    float: left;
+}
+
+.button-holder {
+    float: left;
+    text-align: center;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.helptext {
+    font-size: 11px;
+}
+
+.account-form {
+    text-align: center;
+    margin: auto;
+}
+
+.account-form > p {
+    width: 265px;
+    margin: 10px auto;
+}
+
+#register-form {
+    float: left;
+    margin-left: 370px;
+}
+
+#register-form > ul {
+    font-size: 12px;
+}

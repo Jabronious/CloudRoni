@@ -1,11 +1,16 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load fontawesome %}
 
 {% block content%}
+<link rel="stylesheet" href="{% static 'users/css/users.css' %}">
 
-<form role="form" action="" method="post">
+<form role="form" class='account-form' action="" method="post">
 	{% csrf_token %}
 	{{ form.as_p }}
-<button type="submit">Update</button>
+<div class='button-holder'>
+	<button name='submit'>Update</button>
+</div>
 </form>
 
 {% endblock content %}
