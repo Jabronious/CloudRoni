@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load fontawesome %}
+
+{% block content%}
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<form action="{% url 'csv_upload:upload_csv' team.id %}" method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+<div>
+    <label for="name">File: </label>
+    <div>
+        <input type="file" name="csv_file" id="csv_file" required="True">
+    </div>                    
+</div>
+<div>                    
+    <div>
+         <button> <span></span>Upload </button>
+    </div> 
+</div>
+</form>
+
+{% endblock content %}
