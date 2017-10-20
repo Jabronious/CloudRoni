@@ -1,0 +1,19 @@
+.upload-btn {
+    float: left;
+    text-align: center;
+    padding: 10px 40px;
+    background-color: #3CC47C;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    margin: 10px;
+}
+
+.form-container {
+    width: 100%;
+}
+
+#csv-form{
+    width: 160px;
+    margin: auto;
+}

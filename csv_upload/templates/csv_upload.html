@@ -3,21 +3,18 @@
 {% load fontawesome %}
 
 {% block content%}
+<script src="{% static 'csv_upload/js/csv_upload.js' %}"></script>
+
+<link rel="stylesheet" href="{% static 'csv_upload/css/csv_upload.css' %}">
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-<form action="{% url 'csv_upload:upload_csv' team.id %}" method="POST" enctype="multipart/form-data">
-{% csrf_token %}
-<div>
-    <label for="name">File: </label>
-    <div>
-        <input type="file" name="csv_file" id="csv_file" required="True">
-    </div>                    
+<div class='form-container'>
+    <form id='csv-form' action="{% url 'csv_upload:upload_csv' team.id %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+        <div>
+            <input class='inputfile' type="file" name="csv_file" id="csv_file" required="True">
+        </div>
+        <button class='upload-btn'>{% fontawesome_icon 'upload' %} Upload</button>
+    </form>
 </div>
-<div>                    
-    <div>
-         <button> <span></span>Upload </button>
-    </div> 
-</div>
-</form>
-
 {% endblock content %}

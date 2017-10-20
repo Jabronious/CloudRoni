@@ -8,7 +8,8 @@
 <div id='player-table'>
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
     <h1 class='page-header'>{{ team.team_name }}</h1>
-    <a class='creation-button' href="{% url 'cloud_roni:create_player' team.id %}">{% fontawesome_icon 'plus-circle' %}Create New Player for {{ team.team_name }}</a>
+    <a class='creation-button' href="{% url 'cloud_roni:create_player' team.id %}">{% fontawesome_icon 'plus-circle' %} Create New Player for {{ team.team_name }}</a>
+    <a class='creation-button' style='float:right' href="{% url 'csv_upload:upload_csv' team.id %}">{% fontawesome_icon 'upload' %} Upload Players</a>
     <table>
     	<th>Player Name</th>
     	<th>Points Scored</th>
@@ -21,7 +22,6 @@
     		</tr>
     	{% endfor %}
     </table>
-    <a href="{% url 'csv_upload:upload_csv' team.id %}">Upload Players</a>
     <div class='back-link'>
         <a href="{% url 'cloud_roni:index' %}">Back to All Teams</a>
     </div>
