@@ -13,7 +13,25 @@
     width: 100%;
 }
 
-#csv-form{
+#csv-form {
     width: 160px;
     margin: auto;
+}
+
+#csv-info {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#csv-info-inner {
+    width: 400px;
+    height: 100px;
+    margin: auto;
+    border-color: red;
+    border-style: solid;
+    background-color: #e8e8e8;
+}
+
+#csv-info-inner > ol {
+    margin-top: 0;
 }
