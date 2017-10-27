@@ -35,3 +35,8 @@
 #csv-info-inner > ol {
     margin-top: 0;
 }
+
+#csv-info-inner > span {
+    margin: 0 5px;
+    float: left;
+}

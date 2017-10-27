@@ -8,13 +8,17 @@ from django.shortcuts import render
 
 from CloudRoni.models import Team, UserPlayer, Point
 from CloudRoni.forms import UserPlayerForm
+from django.contrib.auth.decorators import login_required
 
 import pdb
 import re
 
 # Create your views here.
+
+@login_required
 def upload_csv(request, team_id):
     team = get_object_or_404(Team, id=team_id)
+
     if "GET" == request.method:
         return render(request, "csv_upload.html", {'team': team})
     # if not GET, then proceed
