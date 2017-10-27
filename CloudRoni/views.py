@@ -21,6 +21,21 @@ class IndexView(generic.ListView):
 		"""Return all teams"""
 		return Team.objects.all().order_by('-created_date')
 
+class PlayersView(generic.ListView):
+	template_name = 'players/all_players.html'
+	context_object_name = 'players_list'
+
+	def get_queryset(self):
+		query = self.request.GET.get('q')
+		if query:
+			result_one = UserPlayer.objects.filter(player_first_name=query)
+			result_two = UserPlayer.objects.filter(player_last_name=query)
+			result = result_one | result_two
+		else:
+			result = UserPlayer.objects.all()
+		
+		return result
+
 class TeamView(generic.DetailView):
 	model = Team
 	template_name = 'teams/detail.html'

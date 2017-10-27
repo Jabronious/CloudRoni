@@ -12,6 +12,15 @@
         <img src="{% static 'CloudRoni/img/logo_small.png' %}">
     </div>
     <a href="{% url 'cloud_roni:index' %}"><span class='nav-item'>Teams<span></a>
+    <a href="{% url 'cloud_roni:all_players' %}"><span class='nav-item'>Players<span></a>
+
+    <form id="searchform" action="{% url 'cloud_roni:all_players' %}" method="get" accept-charset="utf-8">
+      <button class="searchbutton" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+      <input class="searchfield" id="searchbox" name="q" type="text" placeholder="Search">
+    </form>
+
     <div class='login'>
     {% if user.is_authenticated %}
         <span>Hello, <a href="{% url 'users:account' user.id %}">{{ user.username }}</a></span>

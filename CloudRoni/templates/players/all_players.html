@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load fontawesome %}
+
+{% block content%}
+<script src="{% static 'CloudRoni/js/player.js' %}"></script>
+<link rel="stylesheet" href="{% static 'CloudRoni/css/players.css' %}">
+<link rel="stylesheet" href="{% static 'CloudRoni/css/team.css' %}">
+
+<div id='player-table'>
+	<h1 class='page-header'>Players</h1>
+	{% if players_list %}
+	<table>
+		<th>Player Name</th>
+    	<th>Points Scored</th>
+    	<th>Usage</th>
+		{% for player in players_list %}
+			<tr>
+				<td><a href="{% url 'cloud_roni:team' player.player_team.id %}">{{ player }}</a></td>
+				<td>{{ player.points_scored }}</td>
+    			<td class='{{ player.usage }}'>{{ player.usage }}</td>
+			</tr>
+		{% endfor %}
+	{% else %}
+		<p>There are no players with that search.</p>
+{% endif %}
+	</table>
+</div>
+
+
+{% endblock content %}
