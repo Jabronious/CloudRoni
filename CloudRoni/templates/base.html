@@ -8,23 +8,26 @@
 <link rel="stylesheet" href="{% static 'CloudRoni/css/table.css' %}">
 
 <div id='nav-bar'>
-    <div id='main-logo' class='image-container'>
-        <img src="{% static 'CloudRoni/img/logo_small.png' %}">
+    <div id='left-nav-bar'>
+        <div id='main-logo' class='image-container'>
+            <img src="{% static 'CloudRoni/img/logo_small.png' %}">
+        </div>
+        <a href="{% url 'cloud_roni:index' %}"><span class='nav-item'>Teams<span></a>
+        <a href="{% url 'cloud_roni:all_players' %}"><span class='nav-item'>Players<span></a>
     </div>
-    <a href="{% url 'cloud_roni:index' %}"><span class='nav-item'>Teams<span></a>
-    <a href="{% url 'cloud_roni:all_players' %}"><span class='nav-item'>Players<span></a>
+    
+    
 
-    <form id="searchform" action="{% url 'cloud_roni:all_players' %}" method="get" accept-charset="utf-8">
-      <button class="searchbutton" type="submit">
-        <i class="fa fa-search"></i>
-      </button>
-      <input class="searchfield" id="searchbox" name="q" type="text" placeholder="Search">
-    </form>
-
-    <div class='login'>
+    <div id='right-nav-bar' class='login'>
+        <form id="search-form" action="{% url 'cloud_roni:all_players' %}" method="get" accept-charset="utf-8">
+            <input class="search-field" id="searchbox" name="q" type="text" placeholder="Search Players">
+            <button class="search-button" type="submit">
+                <i class="fa fa-search"></i>
+            </button>
+        </form>
     {% if user.is_authenticated %}
-        <span>Hello, <a href="{% url 'users:account' user.id %}">{{ user.username }}</a></span>
         <a href="{% url 'users:logout' %}"><span class='nav-item'>Log out</span></a>
+        <span>Hello, <a href="{% url 'users:account' user.id %}">{{ user.username }}</a></span>
     {% else %}
         <a href="{% url 'users:login' %}"><span class='nav-item'>Log in</span></a>
         <a href="{% url 'users:register' %}"><span class='nav-item'>Register</span></a>

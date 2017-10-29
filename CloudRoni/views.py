@@ -28,12 +28,10 @@ class PlayersView(generic.ListView):
 	def get_queryset(self):
 		query = self.request.GET.get('q')
 		if query:
-			result_one = UserPlayer.objects.filter(player_first_name=query)
-			result_two = UserPlayer.objects.filter(player_last_name=query)
-			result = result_one | result_two
+			result = UserPlayer.objects.filter(player_first_name=query) | UserPlayer.objects.filter(player_last_name=query)
 		else:
 			result = UserPlayer.objects.all()
-		
+
 		return result
 
 class TeamView(generic.DetailView):

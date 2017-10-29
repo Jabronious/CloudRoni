@@ -40,7 +40,8 @@ class UserPlayer(models.Model):
         (NOT_USING, 'Not Using'),
     )
     player_team = models.ForeignKey(Team,
-                                    on_delete=models.CASCADE)
+                                    on_delete=models.CASCADE,
+                                    null=True)
     player_first_name = models.CharField(max_length=20)
     player_last_name = models.CharField(max_length=20)
     points_scored = models.IntegerField(default=0)
