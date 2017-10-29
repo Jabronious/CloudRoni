@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'CloudRoni',
     'users',
     'fontawesome',
+    'csv_upload',
 ]
 
 MIDDLEWARE = [
