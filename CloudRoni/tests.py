@@ -1,7 +1,7 @@
 import datetime
 
 from django.utils import timezone
-from django.test import TestCase
+from django.test import TestCase, RequestFactory
 from django.core.urlresolvers import resolve
 from django.http import HttpRequest
 from django.urls import reverse
@@ -9,6 +9,7 @@ from django.core import mail
 
 from .models import Team, UserPlayer, Point
 from . import views
+from .views import PlayersView
 from .forms import UserPlayerForm, TeamForm, PointForm
 from django.contrib.auth.models import User
 import pdb
@@ -72,6 +73,30 @@ class CloudRoniViewsTests(TestCase):
         player = UserPlayer(player_team=team, player_first_name='joe', player_last_name='momma')
         player.save()
         self.player = player
+
+    def create_players_in_db(self):
+        num_arr = ["1","2","3","4"]
+        
+        for nums in num_arr:
+            player = UserPlayer(player_first_name='joe', player_last_name='momma' + nums)
+            player.save()
+
+    def test_search_players_with_valid_search(self):
+        name_to_search = "joe"
+        request = RequestFactory().get('/players')
+        view = PlayersView.as_view()
+        self.create_players_in_db()
+        response = view(request, q=name_to_search)
+
+        self.assertEqual(response.context_data['players_list'].count(), 4)
+
+    def test_search_players_invalid_search(self):
+        name_to_search = "joseph"
+        request = RequestFactory().get('/players')
+        view = PlayersView.as_view()
+        response = view(request, q=name_to_search)
+
+        self.assertEqual(response.context_data['players_list'].count(), 0)
     
     def test_root_url_resolves_to_teams(self):
         found = resolve('/')

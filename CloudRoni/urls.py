@@ -21,5 +21,5 @@ urlpatterns = [
     url(r'^(?P<player_id>[0-9]+)/delete_player/$', views.delete_player, name='delete_player'),
     # ex: CloudRoni/55/add_point
     url(r'^(?P<player_id>[0-9]+)/add_point/$', views.add_point, name='add_point'),
-   
+    url(r'^players/$', views.PlayersView.as_view(), name='all_players'),
 ]
