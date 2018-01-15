@@ -3,7 +3,7 @@ python:
   - "2.7"
 # command to install dependencies
 install:
-  - pip install Django
+  - pip install Django==1.11.1
   - pip install django-fontawesome
   - pip install coverage
 script:
