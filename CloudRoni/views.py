@@ -149,6 +149,17 @@ def update_player(request, player_id):
 
 	return render(request, 'players/update.html', {'form': form, 'team': player.player_team})
 
+def place_trade(request, team_id):
+	#Create a model for a trade that is created in this method and then when trade is accepted or declined it will save but be hidden in the ui
+	requesting_team = get_object_or_404(Team, team_owner=request.user)
+	receiving_team = get_object_or_404(Team, id=team_id)
+	
+	if request.method == 'POST':
+		#do some logic
+		return render(request, 'teams/trade.html')
+	
+	return render(request, 'teams/trade.html', {'requesting_team': requesting_team, 'receiving_team': receiving_team})
+
 @login_required
 def delete_player(request, player_id):
 	player = get_object_or_404(UserPlayer, pk=player_id)

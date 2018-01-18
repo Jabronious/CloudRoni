@@ -72,3 +72,21 @@ class Point(models.Model):
     
     def __str__(self):
         return str(self.point)
+
+class Trade(models.Model):
+    ACCEPTED = 1
+    DECLINED = -1
+    PENDING = 0
+    OUTCOME_CHOICES = (
+        (ACCEPTED, "Accepted"),
+        (DECLINED, "Declined"),
+        (PENDING, "Pending"),
+    )
+    proposing_team = models.ForeignKey(Team, related_name = "proposing_team")
+    receiving_team = models.ForeignKey(Team, related_name = "receiving_team")
+    is_completed = models.BooleanField(default=False)
+    outcome = models.CharField(
+        choices=OUTCOME_CHOICES,
+        max_length=10)
+    created_date = models.DateTimeField()
+    proposing_team_player_ids = models.ManyToManyField(UserPlayer)
