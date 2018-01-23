@@ -12,3 +12,21 @@ td > a {
 .NU {
     color: #cc3300;
 }
+
+.trade-header {
+    margin: 0;
+    text-align: center;
+}
+
+.trade-table {
+    width: 50%;
+    float: left;
+}
+
+.checkbox-cell {
+    text-align: center;
+}
+
+.selected-player {
+    background-color: rgb(208,208,208) !important;
+}

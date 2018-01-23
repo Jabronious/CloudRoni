@@ -89,4 +89,8 @@ class Trade(models.Model):
         choices=OUTCOME_CHOICES,
         max_length=10)
     created_date = models.DateTimeField()
-    proposing_team_player_ids = models.ManyToManyField(UserPlayer)
+    proposing_team_players = models.ManyToManyField(UserPlayer, related_name = "proposing_team_players")
+    receiving_team_players = models.ManyToManyField(UserPlayer, related_name = "receiving_team_players")
+    
+    def __str__(self):
+        return self.proposing_team.team_name + " -> " + self.receiving_team.team_name

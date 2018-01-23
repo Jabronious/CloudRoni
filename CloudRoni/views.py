@@ -1,4 +1,4 @@
-from django.http import Http404, HttpResponseRedirect, HttpResponse
+from django.http import Http404, HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect, render_to_response
 from django.template import loader, RequestContext
 from django.urls import reverse
@@ -7,8 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 
-from .models import Team, UserPlayer, Point
+from .models import Team, UserPlayer, Point, Trade
 from .forms import UserPlayerForm, TeamForm, PointForm
 
 import pdb
@@ -149,14 +150,24 @@ def update_player(request, player_id):
 
 	return render(request, 'players/update.html', {'form': form, 'team': player.player_team})
 
+@csrf_exempt
 def place_trade(request, team_id):
-	#Create a model for a trade that is created in this method and then when trade is accepted or declined it will save but be hidden in the ui
 	requesting_team = get_object_or_404(Team, team_owner=request.user)
 	receiving_team = get_object_or_404(Team, id=team_id)
-	
+
 	if request.method == 'POST':
-		#do some logic
-		return render(request, 'teams/trade.html')
+		new_trade = Trade(proposing_team=requesting_team,
+						receiving_team=receiving_team,
+						created_date=timezone.now(),)
+		new_trade.save()
+		for player_id in request.POST.getlist('requesting_team_ids[]'):
+			player = UserPlayer.objects.get(id=player_id)
+			new_trade.proposing_team_players.add(player)
+		for player_id in request.POST.getlist('receiving_team_ids[]'):
+			player = UserPlayer.objects.get(id=player_id)
+			new_trade.receiving_team_players.add(player)
+		new_trade.save()
+		return JsonResponse({'trade': str(new_trade)})
 	
 	return render(request, 'teams/trade.html', {'requesting_team': requesting_team, 'receiving_team': receiving_team})
 

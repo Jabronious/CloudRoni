@@ -4,17 +4,44 @@
 
 {% block content%}
 <link rel="stylesheet" href="{% static 'CloudRoni/css/team.css' %}">
+<script src="{% static 'CloudRoni/js/teams.js' %}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#submit-trade").on('click', function() {
+            submitTrade('{% url "cloud_roni:place_trade" receiving_team.id  %}');
+        });
+    });
+</script>
 
 <div id='player-table'>
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-    <h1>It is working</h1>
-    <form>
-        <select name='players' multiple>
+    <h1 class="trade-header">Propose Trade</h1>
+    <div class="trade-table">
+        <h3 class="trade-header">{{ requesting_team }}</h3>
+        <table id="requesting-team">
+            <th>Select</th>
+            <th>Player Name</th>
             {% for player in requesting_team.userplayer_set.all %}
-                <option value="{{ player.id }}">{{ player }}</option>
+                <tr>
+                    <td class='checkbox-cell'><input data-player-id="{{ player.id }}" class="player-select" type="checkbox"/></td>
+                    <td>{{ player }}</td>
+                </tr>
             {% endfor %}
-        </select>
-        <input type='submit'>
-    </form>
+        </table>
+    </div>
+    <div class="trade-table">
+        <h3 class="trade-header">{{ receiving_team }}</h3>
+        <table id="receiving-team">
+            <th>Select</th>
+            <th>Player Name</th>
+            {% for player in receiving_team.userplayer_set.all %}
+                <tr>
+                    <td class='checkbox-cell'><input data-player-id="{{ player.id }}" class="player-select" type="checkbox"/></td>
+                    <td>{{ player }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <button id="submit-trade">Submit Trade</button>
 </div>
 {% endblock content %}
