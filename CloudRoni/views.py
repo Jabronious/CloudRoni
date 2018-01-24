@@ -150,6 +150,7 @@ def update_player(request, player_id):
 
 	return render(request, 'players/update.html', {'form': form, 'team': player.player_team})
 
+@login_required
 @csrf_exempt
 def place_trade(request, team_id):
 	requesting_team = get_object_or_404(Team, team_owner=request.user)
