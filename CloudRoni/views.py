@@ -39,6 +39,15 @@ class TeamView(generic.DetailView):
 	model = Team
 	template_name = 'teams/detail.html'
 
+class TradesView(generic.ListView):
+	template_name = 'teams/trades_index.html'
+	context_object_name = 'trade_list'
+
+	def get_queryset(self):
+		team = Team.objects.get(team_owner=self.request.user)
+		result = Trade.objects.filter(receiving_team=team) | Trade.objects.filter(proposing_team=team)
+		return result
+
 @login_required
 def players(request, team_id, player_id):
 	player = get_object_or_404(UserPlayer, pk=player_id)
@@ -171,6 +180,16 @@ def place_trade(request, team_id):
 		return JsonResponse({'trade': str(new_trade)})
 	
 	return render(request, 'teams/trade.html', {'requesting_team': requesting_team, 'receiving_team': receiving_team})
+
+@login_required
+@csrf_exempt
+def complete_trade(request):
+	trade = get_object_or_404(Trade, id=request.POST.get('trade_id'))
+	outcome = request.POST.get('outcome')
+
+	trade.update_outcome(outcome)
+
+	return JsonResponse({'outcome': trade.outcome})
 
 @login_required
 def delete_player(request, player_id):

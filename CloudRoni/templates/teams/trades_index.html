@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load fontawesome %}
+{% load debug %}
+
+{% block content%}
+<script src="{% static 'CloudRoni/js/teams.js' %}"></script>
+<link rel="stylesheet" href="{% static 'CloudRoni/css/team.css' %}">
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(".submit-outcome").on('click', function() {
+            postTradeOutcome('{% url "cloud_roni:complete_trade" %}', this);
+        });
+    });
+</script>
+
+<div id='player-table'>
+	<h1 class='page-header'>My Trades</h1>
+	{% if trade_list %}
+	<table>
+		<th>Proposing Team</th>
+		<th>Receive Players</th>
+    	<th>Give Players</th>
+    	<th>Outcome</th>
+		{% for trade in trade_list %}
+			<tr>
+			    <td><a href="{% url 'cloud_roni:team' trade.proposing_team.id %}">{{ trade.proposing_team }}</a></td>
+				<td>
+				    {% for player in trade.proposing_team_players.all %}
+				        <span><a href="{% url 'cloud_roni:players' trade.proposing_team.id player.id %}">{{ player }}</a></span>
+				    {% endfor %}
+				</td>
+				<td>
+				    {% for player in trade.receiving_team_players.all %}
+				        <span><a href="{% url 'cloud_roni:players' trade.receiving_team.id player.id %}">{{ player }}</a></span>
+				    {% endfor %}
+				</td>
+				<td>
+				    {% if trade.proposing_team.team_owner == user or trade.is_completed == True %}
+				        <span>{{ trade.outcome }}</span>
+				    {% else %}
+    				    <button class="submit-outcome" data-outcome="accept" data-trade-id="{{ trade.id }}">ACCEPT</button>
+    				    <button class="submit-outcome" data-outcome="decline" data-trade-id="{{ trade.id }}">DECLINE</button>
+    				{% endif %}
+				</td>
+			</tr>
+		{% endfor %}
+	{% else %}
+		<p>There are no trades</p>
+{% endif %}
+	</table>
+</div>
+
+
+{% endblock content %}

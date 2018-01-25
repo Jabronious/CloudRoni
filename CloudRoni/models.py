@@ -87,10 +87,21 @@ class Trade(models.Model):
     is_completed = models.BooleanField(default=False)
     outcome = models.CharField(
         choices=OUTCOME_CHOICES,
-        max_length=10)
+        max_length=10,
+        default="Pending")
     created_date = models.DateTimeField()
     proposing_team_players = models.ManyToManyField(UserPlayer, related_name = "proposing_team_players")
     receiving_team_players = models.ManyToManyField(UserPlayer, related_name = "receiving_team_players")
     
     def __str__(self):
         return self.proposing_team.team_name + " -> " + self.receiving_team.team_name
+
+    def update_outcome(self, outcome):
+        if(outcome == 'accept'):
+            self.outcome = "Accepted"
+            pdb.set_trace()
+        else:
+            self.outcome = "Declined"
+
+        self.is_completed = True
+        self.save()

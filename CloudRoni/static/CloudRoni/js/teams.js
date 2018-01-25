@@ -18,7 +18,7 @@ function submitTrade(url) {
         tradeProposedError("No players selected");
         return;
     }
-    
+
     $.ajax({
         url: url,
         data: {
@@ -30,6 +30,26 @@ function submitTrade(url) {
         success: function (data) {
             if (data.trade) {
                 $("#player-table").replaceWith("<h3>" + data.trade + " created" + "</h3>")
+            }
+        }
+    });
+}
+
+function postTradeOutcome(url, _this) {
+    var outcome = $(_this).data("outcome")
+    var trade_id = $(_this).data("trade-id")
+    
+    $.ajax({
+        url: url,
+        data: {
+            'outcome': outcome,
+            'trade_id': trade_id,
+        },
+        type: 'POST',
+        dataType: 'json',
+        success: function (data) {
+            if (data.outcome) {
+                $(_this).closest("td").replaceWith("<td>" + data.outcome + "</td>")
             }
         }
     });
