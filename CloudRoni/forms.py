@@ -20,4 +20,4 @@ class TeamForm(ModelForm):
 class PointForm(ModelForm):
     class Meta:
         model = Point
-        exclude = ['player', 'point_owner']
+        exclude = ['player', 'point_owner', 'team']

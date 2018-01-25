@@ -74,9 +74,12 @@ def add_point(request, player_id):
 			point = form.save(commit=False)
 			point.player = player
 			point.point_owner = request.user
+			point.team = str(player.player_team)
 			point.save()
 			player.points_scored += point.point
 			player.save()
+			player.player_team.team_points += point.point
+			player.player_team.save()
 			build_and_send_email_alert(player, point)
 		else:
 			return render(request, 'players/index.html', {

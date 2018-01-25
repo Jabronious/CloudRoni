@@ -4,7 +4,7 @@ import datetime
 
 from django.db import models
 from django.utils import timezone
-from django.db.models import Sum
+from django.db.models import Sum, F
 from django.contrib.auth.models import User
 
 import pdb
@@ -14,6 +14,7 @@ class Team(models.Model):
     team_name = models.CharField(max_length=200)
     created_date = models.DateTimeField('date published')
     team_owner = models.ForeignKey(User)
+    team_points = models.IntegerField(default=0)
 
     def __str__(self):
         return self.team_name
@@ -69,6 +70,7 @@ class Point(models.Model):
         default=0)
     note = models.TextField(max_length=200)
     point_owner = models.ForeignKey(User)
+    team = models.TextField(max_length=200)
     
     def __str__(self):
         return str(self.point)
@@ -99,7 +101,16 @@ class Trade(models.Model):
     def update_outcome(self, outcome):
         if(outcome == 'accept'):
             self.outcome = "Accepted"
-            pdb.set_trace()
+            #transfer players to proposing team
+            proposing_queryset = self.receiving_team_players.all()
+            proposing_queryset.update(player_team=self.proposing_team)
+            for player in proposing_queryset:
+                player.save()
+            #transfer players to receiving team
+            receiving_queryset = self.proposing_team_players.all()
+            receiving_queryset.update(player_team=self.receiving_team)
+            for player in receiving_queryset:
+                player.save()
         else:
             self.outcome = "Declined"
 
