@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load fontawesome %}
-{% load debug %}
 
 {% block content%}
 <script src="{% static 'CloudRoni/js/teams.js' %}"></script>
@@ -28,17 +27,17 @@
 			    <td><a href="{% url 'cloud_roni:team' trade.proposing_team.id %}">{{ trade.proposing_team }}</a></td>
 				<td>
 				    {% for player in trade.proposing_team_players.all %}
-				        <span><a href="{% url 'cloud_roni:players' trade.proposing_team.id player.id %}">{{ player }}</a></span>
+				        <a href="{% url 'cloud_roni:players' trade.proposing_team.id player.id %}">{{ player }}</a>
 				    {% endfor %}
 				</td>
 				<td>
 				    {% for player in trade.receiving_team_players.all %}
-				        <span><a href="{% url 'cloud_roni:players' trade.receiving_team.id player.id %}">{{ player }}</a></span>
+				        <a href="{% url 'cloud_roni:players' trade.receiving_team.id player.id %}">{{ player }}</a>
 				    {% endfor %}
 				</td>
 				<td>
 				    {% if trade.proposing_team.team_owner == user or trade.is_completed == True %}
-				        <span>{{ trade.outcome }}</span>
+				        {{ trade.outcome }}
 				    {% else %}
     				    <button class="submit-outcome" data-outcome="accept" data-trade-id="{{ trade.id }}">ACCEPT</button>
     				    <button class="submit-outcome" data-outcome="decline" data-trade-id="{{ trade.id }}">DECLINE</button>

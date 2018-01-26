@@ -29,7 +29,7 @@ function submitTrade(url) {
         dataType: 'json',
         success: function (data) {
             if (data.trade) {
-                $("#player-table").replaceWith("<h3>" + data.trade + " created" + "</h3>")
+                $("#player-table").replaceWith("<h1 style='text-align: center;'>Trade Submitted</h1>" + "<h3 style='text-align: center;'>" + data.trade + " created" + "</h3>")
             }
         }
     });

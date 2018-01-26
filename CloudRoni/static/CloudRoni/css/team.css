@@ -30,3 +30,10 @@ td > a {
 .selected-player {
     background-color: rgb(208,208,208) !important;
 }
+
+.button-div-100 {
+    float: left;
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+}

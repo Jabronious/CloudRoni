@@ -22,3 +22,11 @@ tr:nth-child(odd) {
     background-color: #3CC47C;
     color: #fff;
 }
+
+.button {
+    height: 35px;
+    background: #1e392a;
+    color: #fff;
+    font-weight: bold;
+    border-color: #1E3904;
+}
