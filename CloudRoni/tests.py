@@ -7,9 +7,9 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.core import mail
 
-from .models import Team, UserPlayer, Point
+from .models import Team, UserPlayer, Point, Trade
 from . import views
-from .views import PlayersView
+from .views import PlayersView, place_trade, TradesView
 from .forms import UserPlayerForm, TeamForm, PointForm
 from django.contrib.auth.models import User
 import pdb
@@ -66,13 +66,25 @@ class CloudRoniViewsTests(TestCase):
     def login_user(self):
         self.client.login(username='jab',password='1234')
 
-    def set_up_team_with_players(self):
+    def set_up_team_with_players(self, is_second_team_needed = False):
         team = Team(team_name='jabs', team_owner_id=1, created_date=timezone.now())
         team.save()
         self.team = team
         player = UserPlayer(player_team=team, player_first_name='joe', player_last_name='momma')
         player.save()
         self.player = player
+        
+        if(is_second_team_needed):
+            user = User.objects.create(username='jabroni')
+            user.set_password('1234')
+            user.email = 'test_email2@gmail.com'
+            user.save()
+            self.second_user = user
+            second_team = Team(team_name='jabronis', team_owner_id=user.id, created_date=timezone.now())
+            second_team.save()
+            player = UserPlayer(player_team=second_team, player_first_name='joseph', player_last_name='momma')
+            player.save()
+            self.second_player = player
 
     def create_players_in_db(self):
         num_arr = ["1","2","3","4"]
@@ -80,6 +92,36 @@ class CloudRoniViewsTests(TestCase):
         for nums in num_arr:
             player = UserPlayer(player_first_name='joe', player_last_name='momma' + nums)
             player.save()
+
+    def test_place_trade_loads(self):
+        self.login_user()
+        self.set_up_team_with_players(True)
+        load_page = self.client.get('/' + str(self.second_user.id) + '/trade/')
+        
+        self.assertIn('Propose Trade', load_page.content)
+
+    def test_submit_place_trade(self):
+        self.login_user()
+        self.set_up_team_with_players(True)
+        data = {'requesting_team_ids[]': self.player.id,
+                'receiving_team_ids[]': self.second_player.id
+                }
+        response = self.client.post('/' + str(self.second_user.id) + '/trade/', data)
+
+        self.assertEqual(Trade.objects.count(), 1)
+        self.assertIn(self.player, Trade.objects.last().proposing_team_players.all())
+        self.assertIn(self.second_player, Trade.objects.last().receiving_team_players.all())
+
+    def test_trade_index_view_loads(self):
+        self.login_user()
+        self.set_up_team_with_players()
+        
+        request = RequestFactory().get('/trades')
+        request.user = self.new_user
+        view = TradesView.as_view()
+        response = view(request)
+
+        self.assertIn("My Trades", response.rendered_content)
 
     def test_search_players_with_valid_search(self):
         name_to_search = "joe"
