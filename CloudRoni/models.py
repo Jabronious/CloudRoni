@@ -101,11 +101,13 @@ class Trade(models.Model):
     def update_outcome(self, outcome):
         if(outcome == 'accept'):
             self.outcome = "Accepted"
+
             #transfer players to proposing team
             proposing_queryset = self.receiving_team_players.all()
             proposing_queryset.update(player_team=self.proposing_team)
             for player in proposing_queryset:
                 player.save()
+
             #transfer players to receiving team
             receiving_queryset = self.proposing_team_players.all()
             receiving_queryset.update(player_team=self.receiving_team)
