@@ -53,6 +53,55 @@ class TeamModelTests(TestCase):
 
         self.assertIs(team.filter_team_points(), 1)
 
+class TradeModelTests(TestCase):
+    
+    def setUp(self):
+        #first user
+        first_user = User.objects.create(username='jab')
+        first_user.set_password('1234')
+        first_user.email = 'test_email@gmail.com'
+        first_user.save()
+
+        #second user
+        second_user = User.objects.create(username='jabroni')
+        second_user.set_password('1234')
+        second_user.email = 'test_email2@gmail.com'
+        second_user.save()
+
+        #first team with players
+        first_team = Team(team_name='jabs', team_owner_id=first_user.id, created_date=timezone.now())
+        first_team.save()
+        first_player = UserPlayer(player_team=first_team, player_first_name='joe', player_last_name='momma')
+        first_player.save()
+
+        #second team with players
+        second_team = Team(team_name='jabronis', team_owner_id=second_user.id, created_date=timezone.now())
+        second_team.save()
+        second_player = UserPlayer(player_team=second_team, player_first_name='joseph', player_last_name='momma')
+        second_player.save()
+
+        #make the trade sucka!
+        new_trade = Trade(proposing_team=first_team,
+                          receiving_team=second_team,
+                          created_date=timezone.now())
+        new_trade.save()
+        new_trade.proposing_team_players.add(first_player)
+        new_trade.receiving_team_players.add(second_player)
+        new_trade.save()
+        self.trade = new_trade
+
+    def test_update_outcome_accept(self):
+        self.trade.update_outcome('accept')
+
+        self.assertEqual(self.trade.outcome, "Accepted")
+        self.assertIs(self.trade.is_completed, True)
+
+    def test_update_outcome_decline(self):
+        self.trade.update_outcome('decline')
+        
+        self.assertEqual(self.trade.outcome, "Declined")
+        self.assertIs(self.trade.is_completed, True)
+
 class CloudRoniViewsTests(TestCase):
     
     def setUp(self):
