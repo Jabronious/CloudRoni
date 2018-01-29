@@ -134,6 +134,7 @@ def create_team(request):
 			new_team = form.save(commit=False)
 			new_team.created_date = timezone.now()
 			new_team = form.save()
+
 			return HttpResponseRedirect(reverse('cloud_roni:index'))
 		else:
 			return render(request, 'teams/create.html', {

@@ -15,7 +15,7 @@ class UserPlayerForm(ModelForm):
 class TeamForm(ModelForm):
     class Meta:
         model = Team
-        exclude = ['created_date']
+        exclude = ['created_date', 'team_points']
         
 class PointForm(ModelForm):
     class Meta:
