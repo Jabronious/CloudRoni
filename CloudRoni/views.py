@@ -1,4 +1,4 @@
-from django.http import Http404, HttpResponseRedirect, HttpResponse
+from django.http import Http404, HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect, render_to_response
 from django.template import loader, RequestContext
 from django.urls import reverse
@@ -7,8 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 
-from .models import Team, UserPlayer, Point
+from .models import Team, UserPlayer, Point, Trade
 from .forms import UserPlayerForm, TeamForm, PointForm
 
 import pdb
@@ -38,6 +39,15 @@ class TeamView(generic.DetailView):
 	model = Team
 	template_name = 'teams/detail.html'
 
+class TradesView(generic.ListView):
+	template_name = 'teams/trades_index.html'
+	context_object_name = 'trade_list'
+
+	def get_queryset(self):
+		team = Team.objects.get(team_owner=self.request.user)
+		result = Trade.objects.filter(receiving_team=team) | Trade.objects.filter(proposing_team=team)
+		return result
+
 @login_required
 def players(request, team_id, player_id):
 	player = get_object_or_404(UserPlayer, pk=player_id)
@@ -64,9 +74,12 @@ def add_point(request, player_id):
 			point = form.save(commit=False)
 			point.player = player
 			point.point_owner = request.user
+			point.team = str(player.player_team)
 			point.save()
 			player.points_scored += point.point
 			player.save()
+			player.player_team.team_points += point.point
+			player.player_team.save()
 			build_and_send_email_alert(player, point)
 		else:
 			return render(request, 'players/index.html', {
@@ -121,6 +134,7 @@ def create_team(request):
 			new_team = form.save(commit=False)
 			new_team.created_date = timezone.now()
 			new_team = form.save()
+
 			return HttpResponseRedirect(reverse('cloud_roni:index'))
 		else:
 			return render(request, 'teams/create.html', {
@@ -148,6 +162,38 @@ def update_player(request, player_id):
 		return render(request, 'players/index.html', context)
 
 	return render(request, 'players/update.html', {'form': form, 'team': player.player_team})
+
+@login_required
+@csrf_exempt
+def place_trade(request, team_id):
+	requesting_team = get_object_or_404(Team, team_owner=request.user)
+	receiving_team = get_object_or_404(Team, id=team_id)
+
+	if request.method == 'POST':
+		new_trade = Trade(proposing_team=requesting_team,
+						receiving_team=receiving_team,
+						created_date=timezone.now(),)
+		new_trade.save()
+		for player_id in request.POST.getlist('requesting_team_ids[]'):
+			player = UserPlayer.objects.get(id=player_id)
+			new_trade.proposing_team_players.add(player)
+		for player_id in request.POST.getlist('receiving_team_ids[]'):
+			player = UserPlayer.objects.get(id=player_id)
+			new_trade.receiving_team_players.add(player)
+		new_trade.save()
+		return JsonResponse({'trade': str(new_trade)})
+	
+	return render(request, 'teams/trade.html', {'requesting_team': requesting_team, 'receiving_team': receiving_team})
+
+@login_required
+@csrf_exempt
+def complete_trade(request):
+	trade = get_object_or_404(Trade, id=request.POST.get('trade_id'))
+	outcome = request.POST.get('outcome')
+
+	trade.update_outcome(outcome)
+
+	return JsonResponse({'outcome': trade.outcome})
 
 @login_required
 def delete_player(request, player_id):

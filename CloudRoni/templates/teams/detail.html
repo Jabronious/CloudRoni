@@ -1,13 +1,20 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load fontawesome %}
+{% load debug %}
 
 {% block content%}
 <link rel="stylesheet" href="{% static 'CloudRoni/css/team.css' %}">
 
 <div id='player-table'>
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-    <h1 class='page-header'>{{ team.team_name }}</h1>
+    <h1 class='page-header'>
+        <span>{{ team.team_name }}</span>
+        {% if team.team_owner != user %}
+            <br/>
+            <a class='creation-button' style='font-size: 12px;' href="{% url 'cloud_roni:place_trade' team.id %}">{% fontawesome_icon 'exchange' %} Place Trade</a>
+        {% endif %}
+    </h1>
     <a class='creation-button' href="{% url 'cloud_roni:create_player' team.id %}">{% fontawesome_icon 'plus-circle' %} Create New Player for {{ team.team_name }}</a>
     <a class='creation-button' style='float:right' href="{% url 'csv_upload:upload_csv' team.id %}">{% fontawesome_icon 'upload' %} Upload Players</a>
     <table>

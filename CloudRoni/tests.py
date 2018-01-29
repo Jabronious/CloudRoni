@@ -7,9 +7,9 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.core import mail
 
-from .models import Team, UserPlayer, Point
+from .models import Team, UserPlayer, Point, Trade
 from . import views
-from .views import PlayersView
+from .views import PlayersView, place_trade, TradesView
 from .forms import UserPlayerForm, TeamForm, PointForm
 from django.contrib.auth.models import User
 import pdb
@@ -53,6 +53,55 @@ class TeamModelTests(TestCase):
 
         self.assertIs(team.filter_team_points(), 1)
 
+class TradeModelTests(TestCase):
+    
+    def setUp(self):
+        #first user
+        first_user = User.objects.create(username='jab')
+        first_user.set_password('1234')
+        first_user.email = 'test_email@gmail.com'
+        first_user.save()
+
+        #second user
+        second_user = User.objects.create(username='jabroni')
+        second_user.set_password('1234')
+        second_user.email = 'test_email2@gmail.com'
+        second_user.save()
+
+        #first team with players
+        first_team = Team(team_name='jabs', team_owner_id=first_user.id, created_date=timezone.now())
+        first_team.save()
+        first_player = UserPlayer(player_team=first_team, player_first_name='joe', player_last_name='momma')
+        first_player.save()
+
+        #second team with players
+        second_team = Team(team_name='jabronis', team_owner_id=second_user.id, created_date=timezone.now())
+        second_team.save()
+        second_player = UserPlayer(player_team=second_team, player_first_name='joseph', player_last_name='momma')
+        second_player.save()
+
+        #make the trade sucka!
+        new_trade = Trade(proposing_team=first_team,
+                          receiving_team=second_team,
+                          created_date=timezone.now())
+        new_trade.save()
+        new_trade.proposing_team_players.add(first_player)
+        new_trade.receiving_team_players.add(second_player)
+        new_trade.save()
+        self.trade = new_trade
+
+    def test_update_outcome_accept(self):
+        self.trade.update_outcome('accept')
+
+        self.assertEqual(self.trade.outcome, "Accepted")
+        self.assertIs(self.trade.is_completed, True)
+
+    def test_update_outcome_decline(self):
+        self.trade.update_outcome('decline')
+        
+        self.assertEqual(self.trade.outcome, "Declined")
+        self.assertIs(self.trade.is_completed, True)
+
 class CloudRoniViewsTests(TestCase):
     
     def setUp(self):
@@ -66,13 +115,26 @@ class CloudRoniViewsTests(TestCase):
     def login_user(self):
         self.client.login(username='jab',password='1234')
 
-    def set_up_team_with_players(self):
+    def set_up_team_with_players(self, is_second_team_needed = False):
         team = Team(team_name='jabs', team_owner_id=1, created_date=timezone.now())
         team.save()
         self.team = team
         player = UserPlayer(player_team=team, player_first_name='joe', player_last_name='momma')
         player.save()
         self.player = player
+        
+        if(is_second_team_needed):
+            user = User.objects.create(username='jabroni')
+            user.set_password('1234')
+            user.email = 'test_email2@gmail.com'
+            user.save()
+            self.second_user = user
+            second_team = Team(team_name='jabronis', team_owner_id=user.id, created_date=timezone.now())
+            second_team.save()
+            self.second_team = second_team
+            player = UserPlayer(player_team=second_team, player_first_name='joseph', player_last_name='momma')
+            player.save()
+            self.second_player = player
 
     def create_players_in_db(self):
         num_arr = ["1","2","3","4"]
@@ -80,6 +142,76 @@ class CloudRoniViewsTests(TestCase):
         for nums in num_arr:
             player = UserPlayer(player_first_name='joe', player_last_name='momma' + nums)
             player.save()
+
+    def test_place_trade_loads(self):
+        self.login_user()
+        self.set_up_team_with_players(True)
+        load_page = self.client.get('/' + str(self.second_user.id) + '/trade/')
+
+        self.assertIn('Propose Trade', load_page.content)
+
+    def test_submit_place_trade(self):
+        self.login_user()
+        self.set_up_team_with_players(True)
+        data = {'requesting_team_ids[]': self.player.id,
+                'receiving_team_ids[]': self.second_player.id
+                }
+        response = self.client.post('/' + str(self.second_user.id) + '/trade/', data)
+
+        self.assertEqual(Trade.objects.count(), 1)
+        self.assertIn(self.player, Trade.objects.last().proposing_team_players.all())
+        self.assertIn(self.second_player, Trade.objects.last().receiving_team_players.all())
+
+    def test_trade_index_view_loads(self):
+        self.login_user()
+        self.set_up_team_with_players()
+
+        request = RequestFactory().get('/trades')
+        request.user = self.new_user
+        view = TradesView.as_view()
+        response = view(request)
+
+        self.assertIn("My Trades", response.rendered_content)
+
+    def test_trade_completed_accepted(self):
+        self.login_user()
+        self.set_up_team_with_players(True)
+
+        #creates a trade
+        new_trade = Trade(proposing_team=self.team,
+                          receiving_team=self.second_team,
+                          created_date=timezone.now())
+        new_trade.save()
+        new_trade.proposing_team_players.add(self.player)
+        new_trade.receiving_team_players.add(self.second_player)
+        new_trade.save()
+
+        data = {'trade_id': new_trade.id,
+                'outcome': 'accept'}
+
+        response = self.client.post('/complete_trade/', data)
+
+        self.assertIn("Accepted", response.content)
+
+    def test_trade_completed_declined(self):
+        self.login_user()
+        self.set_up_team_with_players(True)
+
+        #creates a trade
+        new_trade = Trade(proposing_team=self.team,
+                          receiving_team=self.second_team,
+                          created_date=timezone.now())
+        new_trade.save()
+        new_trade.proposing_team_players.add(self.player)
+        new_trade.receiving_team_players.add(self.second_player)
+        new_trade.save()
+
+        data = {'trade_id': new_trade.id,
+                'outcome': 'decline'}
+
+        response = self.client.post('/complete_trade/', data)
+
+        self.assertIn("Declined", response.content)
 
     def test_search_players_with_valid_search(self):
         name_to_search = "joe"

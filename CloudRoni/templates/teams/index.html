@@ -16,7 +16,7 @@
 			<tr>
 				<td><a href="{% url 'cloud_roni:team' team.id %}">{{ team.team_name }}</a></td>
 				{% if team.players_present %}
-					<td>{{ team.filter_team_points }}</td>
+					<td>{{ team.team_points }}</td>
 				{% else %}
 					<td>No Players</td>
 				{% endif %}
