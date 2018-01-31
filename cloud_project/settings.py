@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'users',
     'fontawesome',
     'csv_upload',
+    'django_twilio',
 ]
 
 MIDDLEWARE = [
@@ -137,6 +138,10 @@ LOGIN_URL = '/users/login/'
 # EMAIL_HOST_USER = '<USERNAME>'
 # EMAIL_HOST_PASSWORD = '<PASSWORD>'
 # EMAIL_USE_TLS = True
+
+TWILIO_ACCOUNT_SID = 'AC335366df8747469b3053c68256a1eaa1'
+TWILIO_AUTH_TOKEN = '2398d9054ff88452434cc01f0d1932f7'
+TWILIO_NUMBER = '+19494078602'
 
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 1025

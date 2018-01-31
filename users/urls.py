@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^logout/$', views.logout_view, name='logout'),
     url(r'^register/$', views.register, name='register'),
     url(r'^(?P<user_id>[0-9]+)/account/$', views.update_account, name='account'),
+    url(r'^update_phone_number/$', views.create_or_update_phone_number, name='create_or_update_phone_number'),
 ]

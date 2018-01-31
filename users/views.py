@@ -6,10 +6,14 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-from .forms import UserUpdateForm
+from users.forms import PhoneNumberForm, UserUpdateForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
+from users.models import PhoneNumber
+from django.utils import timezone
+
+import pdb
 
 def logout_view(request):
     logout(request)
@@ -49,3 +53,36 @@ def update_account(request, user_id):
         return render(request, 'users/account.html', context)
     else:
         raise PermissionDenied
+
+@login_required
+def create_or_update_phone_number(request):
+    form_class = PhoneNumberForm
+    user = get_object_or_404(User, pk=request.user.id)
+
+    if request.method == "POST":
+        form = form_class(request.POST, request.FILES)
+
+        if form.is_valid():
+            try:
+                old_number = PhoneNumber.objects.get(user=user)
+                new_number = form['number'].value()
+                old_number.number = str(new_number)
+                old_number.twilio_formatted_number = format_twilio_number(str(new_number))
+                old_number.created_date = timezone.now()
+                old_number.save()
+                pdb.set_trace()
+            except PhoneNumber.DoesNotExist:
+                phone_number = form.save(commit=False)
+                phone_number.user = user
+                phone_number.twilio_formatted_number = format_twilio_number(phone_number.number)
+                phone_number.created_date = timezone.now()
+                phone_number.save()
+        return render(request, 'users/account.html', {'user': user, 'form': UserUpdateForm(request.POST or None, instance=user),})
+
+    context = {
+		'form': form_class,
+	}
+    return render(request, 'phone_numbers/update_phone_number.html', context)
+
+def format_twilio_number(number):
+        return '+1' + number

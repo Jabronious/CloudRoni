@@ -15,6 +15,7 @@ class PdbNode(Node):
         pdb_module.set_trace()
         return ''
 
+#Use for d in context.dicts: print d.keys()
 @register.tag
 def pdb(parser, token):
     return PdbNode()

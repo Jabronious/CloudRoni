@@ -8,9 +8,13 @@ from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 
-from .models import Team, UserPlayer, Point, Trade
-from .forms import UserPlayerForm, TeamForm, PointForm
+from twilio.rest import Client
+
+
+from CloudRoni.models import Team, UserPlayer, Point, Trade
+from CloudRoni.forms import UserPlayerForm, TeamForm, PointForm
 
 import pdb
 
@@ -80,7 +84,11 @@ def add_point(request, player_id):
 			player.save()
 			player.player_team.team_points += point.point
 			player.player_team.save()
+
 			build_and_send_email_alert(player, point)
+
+			message = str(player) + ": received " + str(point) + " point(s)"
+			send_sms('+17143378530', message)
 		else:
 			return render(request, 'players/index.html', {
 				'player': player,
@@ -220,3 +228,10 @@ def build_and_send_email_alert(player, point):
 	    [email_address],
 	    fail_silently=False,
 	)
+
+def send_sms(to, message):
+    client = Client(
+        settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+    response = client.messages.create(
+        body=message, to=to, from_=settings.TWILIO_NUMBER)
+    return response
