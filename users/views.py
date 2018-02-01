@@ -58,10 +58,8 @@ def update_account(request, user_id):
 def create_or_update_phone_number(request):
     form_class = PhoneNumberForm
     user = get_object_or_404(User, pk=request.user.id)
-
     if request.method == "POST":
         form = form_class(request.POST, request.FILES)
-
         if form.is_valid():
             try:
                 old_number = PhoneNumber.objects.get(user=user)
@@ -76,7 +74,7 @@ def create_or_update_phone_number(request):
                 phone_number.user = user
                 phone_number.twilio_formatted_number = format_twilio_number(phone_number.number)
                 phone_number.created_date = timezone.now()
-                phone_number.is_valid_phone_number = phone_number.is_valid_number
+                phone_number.is_valid_phone_number = phone_number.is_valid_number()
                 phone_number.save()
         return render(request, 'users/account.html', {'user': user, 'form': UserUpdateForm(request.POST or None, instance=user),})
 
