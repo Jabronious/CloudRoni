@@ -69,13 +69,14 @@ def create_or_update_phone_number(request):
                 old_number.number = str(new_number)
                 old_number.twilio_formatted_number = format_twilio_number(str(new_number))
                 old_number.created_date = timezone.now()
+                old_number.is_valid_phone_number = old_number.is_valid_number()
                 old_number.save()
-                pdb.set_trace()
             except PhoneNumber.DoesNotExist:
                 phone_number = form.save(commit=False)
                 phone_number.user = user
                 phone_number.twilio_formatted_number = format_twilio_number(phone_number.number)
                 phone_number.created_date = timezone.now()
+                phone_number.is_valid_phone_number = phone_number.is_valid_number
                 phone_number.save()
         return render(request, 'users/account.html', {'user': user, 'form': UserUpdateForm(request.POST or None, instance=user),})
 

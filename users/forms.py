@@ -8,9 +8,9 @@ class UserUpdateForm(ModelForm):
 		model = User
 		exclude = ['groups', 'user_permissions', 'is_staff',
 		           'is_active', 'is_superuser', 'last_login', 
-		           'date_joined', 'password']
+		           'date_joined', 'password', 'username']
 
 class PhoneNumberForm(ModelForm):
 	class Meta:
 		model = PhoneNumber
-		exclude = ['created_date', 'twilio_formatted_number', 'user']
+		exclude = ['created_date', 'twilio_formatted_number', 'user', 'is_valid_phone_number']

@@ -6,6 +6,7 @@ from django.views import generic
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
+from users.models import PhoneNumber
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
@@ -86,9 +87,13 @@ def add_point(request, player_id):
 			player.player_team.save()
 
 			build_and_send_email_alert(player, point)
-
-			message = str(player) + ": received " + str(point) + " point(s)"
-			send_sms('+17143378530', message)
+			try:
+				number = PhoneNumber.objects.get(user=player.player_team.team_owner)
+				if number.is_valid_phone_number:
+					message = "your friendly neighborhood Jabroni," + str(player) + ": received " + str(point) + " point(s)"
+					send_sms(number, message)
+			except:
+				number = False
 		else:
 			return render(request, 'players/index.html', {
 				'player': player,
@@ -212,14 +217,14 @@ def delete_player(request, player_id):
 	return HttpResponseRedirect(reverse('cloud_roni:team', args=(team.id,)))
 
 def build_and_send_email_alert(player, point):
+	email_address = player.player_team.team_owner.email
+	
+	if email_address == '':
+		return
+
 	subject = str(player) + ' scored a point!'
 	message = (str(point.point_owner) + ' has added a point for ' 
 		+ str(player.player_first_name) + ' ' + str(player.player_last_name) + ': ' + str(point.point))
-
-	email_address = player.player_team.team_owner.email
-
-	if email_address == '':
-		return
 
 	send_mail(
 	    subject,
@@ -233,5 +238,5 @@ def send_sms(to, message):
     client = Client(
         settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
     response = client.messages.create(
-        body=message, to=to, from_=settings.TWILIO_NUMBER)
+        body=message, to=to.twilio_formatted_number, from_=settings.TWILIO_NUMBER)
     return response
