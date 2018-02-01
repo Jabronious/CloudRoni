@@ -10,7 +10,7 @@ import pdb
 
 # Create your models here.
 class PhoneNumber(models.Model):
-    user = models.ForeignKey(User)
+    user = models.OneToOneField(User)
     twilio_formatted_number = models.CharField(max_length=12)
     number = models.CharField(max_length=10)
     created_date = models.DateTimeField('date published')

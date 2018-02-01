@@ -90,7 +90,7 @@ def add_point(request, player_id):
 			try:
 				number = PhoneNumber.objects.get(user=player.player_team.team_owner)
 				if number.is_valid_phone_number:
-					message = "your friendly neighborhood Jabroni," + str(player) + ": received " + str(point) + " point(s)"
+					message = str(player) + ": received " + str(point) + " point(s)"
 					send_sms(number, message)
 			except:
 				number = False
@@ -218,12 +218,12 @@ def delete_player(request, player_id):
 
 def build_and_send_email_alert(player, point):
 	email_address = player.player_team.team_owner.email
-	
+
 	if email_address == '':
 		return
 
 	subject = str(player) + ' scored a point!'
-	message = (str(point.point_owner) + ' has added a point for ' 
+	message = (str(point.point_owner) + ' has added a point for '
 		+ str(player.player_first_name) + ' ' + str(player.player_last_name) + ': ' + str(point.point))
 
 	send_mail(

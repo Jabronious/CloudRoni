@@ -10,10 +10,10 @@
 <form role="form" class='account-form' action="" method="post">
 	{% csrf_token %}
 	{{ form.as_p }}
-<div class='button-holder button-div-100'>
+<div class='button-holder button-div-100' style="margin-bottom: 5px;">
 	<button class='button' name='submit'>Update</button>
 </div>
-<a style='margin-top:5px;' href="{% url 'users:create_or_update_phone_number' %}"><span>Manage Phone Number<span></a>
+<a href="{% url 'users:create_or_update_phone_number' %}"><span>Manage Phone Number<span></a>
 </form>
 
 {% endblock content %}
