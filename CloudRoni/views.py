@@ -87,13 +87,14 @@ def add_point(request, player_id):
 			player.player_team.save()
 
 			build_and_send_email_alert(player, point)
+
 			try:
 				number = PhoneNumber.objects.get(user=player.player_team.team_owner)
 				if number.is_valid_phone_number:
 					message = str(player) + ": received " + str(point) + " point(s)"
 					send_sms(number, message)
 			except:
-				number = False
+				pass
 		else:
 			return render(request, 'players/index.html', {
 				'player': player,
@@ -193,7 +194,17 @@ def place_trade(request, team_id):
 		for player_id in request.POST.getlist('receiving_team_ids[]'):
 			player = UserPlayer.objects.get(id=player_id)
 			new_trade.receiving_team_players.add(player)
+
+		try:
+			number = PhoneNumber.objects.get(user=receiving_team.team_owner)
+			if number.is_valid_phone_number:
+				message = "A trade has been received by " + str(requesting_team)
+				send_sms(number, message)
+		except:
+			pass
 		new_trade.save()
+
+
 		return JsonResponse({'trade': str(new_trade)})
 	
 	return render(request, 'teams/trade.html', {'requesting_team': requesting_team, 'receiving_team': receiving_team})
@@ -205,6 +216,14 @@ def complete_trade(request):
 	outcome = request.POST.get('outcome')
 
 	trade.update_outcome(outcome)
+
+	try:
+		number = PhoneNumber.objects.get(user=trade.proposing_team.team_owner)
+		if number.is_valid_phone_number:
+			message = str(trade.receiving_team) + " has " + trade.outcome.lower() + " your trade."
+			send_sms(number, message)
+	except:
+		pass
 
 	return JsonResponse({'outcome': trade.outcome})
 
