@@ -77,3 +77,25 @@ class UserViewsTests(TestCase):
         formatted_number = format_twilio_number("7143378530")
 
         self.assertEqual("+17143378530", formatted_number)
+
+class PhoneNumberModelTests(TestCase):
+
+    def setUp(self):
+        user = User.objects.create(username='jab')
+        user.set_password('1234')
+        user.email = 'test_email@gmail.com'
+        user.save()
+        number = PhoneNumber(user=user,
+                            twilio_formatted_number='+17143378530',
+                            number='7143378530',
+                            created_date=timezone.now(),
+                            is_valid_phone_number=True
+        )
+        number.save()
+        self.phone_number = number
+
+    def test_is_valid_number_works(self):
+        self.assertEqual(self.phone_number.is_valid_number(), True)
+        self.phone_number.number = '5555555555'
+        self.phone_number.save()
+        self.assertEqual(self.phone_number.is_valid_number(), False)
