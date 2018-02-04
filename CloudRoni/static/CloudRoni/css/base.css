@@ -108,6 +108,7 @@ body {
 
 #search-form {
     float: left;
+    width: 400px;
     margin: 8px 0;
 }
 
