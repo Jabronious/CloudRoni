@@ -6,6 +6,8 @@ install:
   - pip install Django==1.11.1
   - pip install django-fontawesome
   - pip install coverage
+  - pip install twilio
+  - pip install mock
 script:
   - python manage.py test
   - coverage run --source='.' manage.py test

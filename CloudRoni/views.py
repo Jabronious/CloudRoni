@@ -6,11 +6,16 @@ from django.views import generic
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
+from users.models import PhoneNumber
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 
-from .models import Team, UserPlayer, Point, Trade
-from .forms import UserPlayerForm, TeamForm, PointForm
+from twilio.rest import Client
+
+
+from CloudRoni.models import Team, UserPlayer, Point, Trade
+from CloudRoni.forms import UserPlayerForm, TeamForm, PointForm
 
 import pdb
 
@@ -80,7 +85,16 @@ def add_point(request, player_id):
 			player.save()
 			player.player_team.team_points += point.point
 			player.player_team.save()
+
 			build_and_send_email_alert(player, point)
+
+			try:
+				number = PhoneNumber.objects.get(user=player.player_team.team_owner)
+				if number.is_valid_phone_number:
+					message = str(player) + ": received " + str(point) + " point(s)"
+					send_sms(number, message)
+			except:
+				pass
 		else:
 			return render(request, 'players/index.html', {
 				'player': player,
@@ -180,7 +194,17 @@ def place_trade(request, team_id):
 		for player_id in request.POST.getlist('receiving_team_ids[]'):
 			player = UserPlayer.objects.get(id=player_id)
 			new_trade.receiving_team_players.add(player)
+
+		try:
+			number = PhoneNumber.objects.get(user=receiving_team.team_owner)
+			if number.is_valid_phone_number:
+				message = "A trade has been received by " + str(requesting_team)
+				send_sms(number, message)
+		except:
+			pass
 		new_trade.save()
+
+
 		return JsonResponse({'trade': str(new_trade)})
 	
 	return render(request, 'teams/trade.html', {'requesting_team': requesting_team, 'receiving_team': receiving_team})
@@ -193,6 +217,14 @@ def complete_trade(request):
 
 	trade.update_outcome(outcome)
 
+	try:
+		number = PhoneNumber.objects.get(user=trade.proposing_team.team_owner)
+		if number.is_valid_phone_number:
+			message = str(trade.receiving_team) + " has " + trade.outcome.lower() + " your trade."
+			send_sms(number, message)
+	except:
+		pass
+
 	return JsonResponse({'outcome': trade.outcome})
 
 @login_required
@@ -204,14 +236,14 @@ def delete_player(request, player_id):
 	return HttpResponseRedirect(reverse('cloud_roni:team', args=(team.id,)))
 
 def build_and_send_email_alert(player, point):
-	subject = str(player) + ' scored a point!'
-	message = (str(point.point_owner) + ' has added a point for ' 
-		+ str(player.player_first_name) + ' ' + str(player.player_last_name) + ': ' + str(point.point))
-
 	email_address = player.player_team.team_owner.email
 
 	if email_address == '':
 		return
+
+	subject = str(player) + ' scored a point!'
+	message = (str(point.point_owner) + ' has added a point for '
+		+ str(player.player_first_name) + ' ' + str(player.player_last_name) + ': ' + str(point.point))
 
 	send_mail(
 	    subject,
@@ -220,3 +252,10 @@ def build_and_send_email_alert(player, point):
 	    [email_address],
 	    fail_silently=False,
 	)
+
+def send_sms(to, message):
+    client = Client(
+        settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+    response = client.messages.create(
+        body=message, to=to.twilio_formatted_number, from_=settings.TWILIO_NUMBER)
+    return response

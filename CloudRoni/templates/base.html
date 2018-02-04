@@ -1,6 +1,7 @@
 {% load static %}
 {% load fontawesome %}
 {% fontawesome_stylesheet %}
+{% load debug %}
 
 <script src="{% static 'CloudRoni/js/vendor/jquery/jquery.js' %}"></script>
 <script src="{% static 'CloudRoni/js/base.js' %}"></script>
@@ -36,7 +37,16 @@
     </div>
 </div>
 
-{% if user.email == '' %}<p id='add-email-alert'><strong>Add an <a href="{% url 'users:account' user.id %}">email</a> to receive notifications</strong></p>{% endif %}
+{% if user.email == '' %}
+<p class='add-info-alert'>
+    <strong>Add an <a href="{% url 'users:account' user.id %}">email</a> to receive email notifications</strong>
+<p>
+{% endif %}
+{% if user.phonenumber.is_valid_phone_number == False %}
+<p class='add-info-alert'>
+    <strong>Add a <a href="{% url 'users:create_or_update_phone_number' %}">valid phone number</a> to receive text notifications</strong>
+</p>
+{% endif %}
 
 <div id='body' style='margin-top: 25px;'>
 {% block content %}{% endblock content %}

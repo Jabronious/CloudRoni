@@ -24,5 +24,5 @@ urlpatterns = [
     url(r'^players/$', views.PlayersView.as_view(), name='all_players'),
     url(r'^(?P<team_id>[0-9]+)/trade/$', views.place_trade, name='place_trade'),
     url(r'^trades/$', views.TradesView.as_view(), name='my_trades'),
-    url(r'^complete_trade/$', views.complete_trade, name='complete_trade')
+    url(r'^complete_trade/$', views.complete_trade, name='complete_trade'),
 ]

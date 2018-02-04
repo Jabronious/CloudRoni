@@ -52,10 +52,10 @@ body {
     text-align: center;
 }
 
-#add-email-alert {
-    margin: auto;
-    width: 280px;
+.add-info-alert {
+    width: 100%;
     margin-top: 10px;
+    text-align: center;
 }
 
 .creation-button {
