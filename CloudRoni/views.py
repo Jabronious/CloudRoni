@@ -24,8 +24,8 @@ class IndexView(generic.ListView):
 	context_object_name = 'teams_list'
 
 	def get_queryset(self):
-		"""Return all teams"""
-		return Team.objects.all().order_by('-created_date')
+		"""Return all teams ordered by team_points"""
+		return Team.objects.all().order_by('-team_points').reverse()
 
 class PlayersView(generic.ListView):
 	template_name = 'players/all_players.html'

@@ -10,11 +10,11 @@
 	<a id='create-team-link' class='creation-button' href="{% url 'cloud_roni:create_team' %}">{% fontawesome_icon 'plus-circle' %} Create New Team</a>
 	{% if teams_list %}
 	<table>
-		<th>Team Name</th>
+		<th>Team Name (In order of standings)</th>
 		<th>Total Points</th>
 		{% for team in teams_list %}
 			<tr>
-				<td><a href="{% url 'cloud_roni:team' team.id %}">{{ team.team_name }}</a></td>
+				<td><a href="{% url 'cloud_roni:team' team.id %}">{{ forloop.counter }}. {{ team.team_name }}</a></td>
 				{% if team.players_present %}
 					<td>{{ team.team_points }}</td>
 				{% else %}

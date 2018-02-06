@@ -244,7 +244,7 @@ class CloudRoniViewsTests(TestCase):
         Team(team_name='jabs', team_owner_id=1, created_date=timezone.now()).save()
         reload_home_page = self.client.get('/')
 
-        self.assertIn('<a href="/1/team/">jabs</a>', reload_home_page.content)
+        self.assertIn('<a href="/1/team/">1. jabs</a>', reload_home_page.content)
 
     def test_teams_page(self):
         team = Team(team_name='jabs', team_owner_id=1, created_date=timezone.now())
