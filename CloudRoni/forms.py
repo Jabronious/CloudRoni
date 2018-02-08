@@ -16,16 +16,14 @@ class UserPlayerForm(ModelForm):
 		exclude = ['player_team', 'points_scored']
 		
 class TeamForm(ModelForm):
-    def __init__(self, user, *args, **kwargs):
-        super(TeamForm, self).__init__(*args, **kwargs)
-        league = League.objects.get(participants=user)
-        self.fields['team_owner'] = forms.ModelChoiceField(
-            queryset=league.participants.all()
-        )
-
     class Meta:
         model = Team
         exclude = ['created_date', 'team_points', 'league']
+
+    def __init__(self, user, *args, **kwargs):
+        super(TeamForm, self).__init__(*args, **kwargs)
+        league = League.objects.get(participants=user)
+        self.fields['team_owner'].queryset = league.participants.all()
         
 class PointForm(ModelForm):
     class Meta:

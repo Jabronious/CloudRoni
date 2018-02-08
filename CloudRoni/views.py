@@ -141,11 +141,8 @@ def create_player(request, team_id):
 
 @login_required
 def create_team(request):
-	form_class = TeamForm(request.user)
-
 	if request.method == 'POST':
-		form = form_class(request.POST, request.FILES)
-
+		form = TeamForm(request.user, request.POST)
 		if form.is_valid():
 			new_team = form.save(commit=False)
 			new_team.created_date = timezone.now()
@@ -154,11 +151,13 @@ def create_team(request):
 
 			return HttpResponseRedirect(reverse('cloud_roni:index'))
 		else:
+			form_class = TeamForm(request.user)
 			return render(request, 'teams/create.html', {
 					'form': form_class,
 					'error_message': "Invalid Information!",
 				})
 
+	form_class = TeamForm(request.user)
 	return render(request, 'teams/create.html', {
 				'form': form_class,
 				})

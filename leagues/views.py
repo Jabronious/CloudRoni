@@ -17,7 +17,6 @@ import pdb
 
 # Create your views here.
 def create_league(request):
-    #request.user --> participants and owner
 	form_class = LeagueForm
 
 	if request.method == 'POST':
