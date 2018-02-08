@@ -12,23 +12,29 @@ from . import views
 from .views import PlayersView, place_trade, TradesView
 from .forms import UserPlayerForm, TeamForm, PointForm
 from django.contrib.auth.models import User
+from leagues.models import League
 import pdb
 
 class TeamModelTests(TestCase):
-
-    def test_was_created_recently(self):
+    def setUp(self):
         user = User(username='jr.merryman', password='rabble')
         user.save()
+        self.user = user
+        league = League(name='league', owner=user, created_date=timezone.now(), signup_code="ehh")
+        league.save()
+        league.participants.add(user)
+        league.save()
+        self.league = league
+
+    def test_was_created_recently(self):
         time = timezone.now() + datetime.timedelta(days = 30)
-        team = Team(created_date=time, id=1, team_owner=user)
+        team = Team(created_date=time, id=1, team_owner=self.user, league=self.league)
         team.save()
 
         self.assertIs(team.was_created_recently(), False)
 
     def test_team_has_players(self):
-        user = User(username='jr.merryman', password='rabble')
-        user.save()
-        team = Team(created_date=timezone.now(), id=1, team_owner=user)
+        team = Team(created_date=timezone.now(), id=1, team_owner=self.user, league=self.league)
         team.save()
         player = UserPlayer(player_team=team, id=1)
         player.save()
@@ -36,17 +42,13 @@ class TeamModelTests(TestCase):
         self.assertIs(team.players_present(), True)
 
     def test_team_has_no_players(self):
-        user = User(username='jr.merryman', password='rabble')
-        user.save()
-        team = Team(created_date=timezone.now(), id=1, team_owner=user)
+        team = Team(created_date=timezone.now(), id=1, team_owner=self.user, league=self.league)
         team.save()
 
         self.assertIs(team.players_present(), False)
 
     def test_filter_points(self):
-        user = User(username='jr.merryman', password='rabble')
-        user.save()
-        team = Team(created_date=timezone.now(), id=1, team_owner=user)
+        team = Team(created_date=timezone.now(), id=1, team_owner=self.user, league=self.league)
         team.save()
         player = UserPlayer(player_team=team, id=1, points_scored=1)
         player.save()
@@ -67,15 +69,23 @@ class TradeModelTests(TestCase):
         second_user.set_password('1234')
         second_user.email = 'test_email2@gmail.com'
         second_user.save()
-
+        
+        #set up league
+        league = League(name='league', owner=first_user, created_date=timezone.now(), signup_code="ehh")
+        league.save()
+        league.participants.add(first_user)
+        league.participants.add(second_user)
+        league.save()
+        self.league = league
+        
         #first team with players
-        first_team = Team(team_name='jabs', team_owner_id=first_user.id, created_date=timezone.now())
+        first_team = Team(team_name='jabs', team_owner_id=first_user.id, created_date=timezone.now(), league=self.league)
         first_team.save()
         first_player = UserPlayer(player_team=first_team, player_first_name='joe', player_last_name='momma')
         first_player.save()
 
         #second team with players
-        second_team = Team(team_name='jabronis', team_owner_id=second_user.id, created_date=timezone.now())
+        second_team = Team(team_name='jabronis', team_owner_id=second_user.id, created_date=timezone.now(), league=self.league)
         second_team.save()
         second_player = UserPlayer(player_team=second_team, player_first_name='joseph', player_last_name='momma')
         second_player.save()
@@ -105,18 +115,24 @@ class TradeModelTests(TestCase):
 class CloudRoniViewsTests(TestCase):
     
     def setUp(self):
-        self.home_page_request = self.client.get('/')
         user = User.objects.create(username='jab')
         user.set_password('1234')
         user.email = 'test_email@gmail.com'
         user.save()
         self.new_user = user
+        self.login_user()
+        self.team_index = self.client.get('/cloud_roni/')
+        league = League(name='league', owner=user, created_date=timezone.now(), signup_code="ehh")
+        league.save()
+        league.participants.add(user)
+        league.save()
+        self.league = league
 
     def login_user(self):
         self.client.login(username='jab',password='1234')
 
     def set_up_team_with_players(self, is_second_team_needed = False):
-        team = Team(team_name='jabs', team_owner_id=1, created_date=timezone.now())
+        team = Team(team_name='jabs', team_owner_id=1, created_date=timezone.now(), league=self.league)
         team.save()
         self.team = team
         player = UserPlayer(player_team=team, player_first_name='joe', player_last_name='momma')
@@ -129,7 +145,7 @@ class CloudRoniViewsTests(TestCase):
             user.email = 'test_email2@gmail.com'
             user.save()
             self.second_user = user
-            second_team = Team(team_name='jabronis', team_owner_id=user.id, created_date=timezone.now())
+            second_team = Team(team_name='jabronis', team_owner_id=user.id, created_date=timezone.now(), league=self.league)
             second_team.save()
             self.second_team = second_team
             player = UserPlayer(player_team=second_team, player_first_name='joseph', player_last_name='momma')
@@ -140,23 +156,21 @@ class CloudRoniViewsTests(TestCase):
         num_arr = ["1","2","3","4"]
         
         for nums in num_arr:
-            player = UserPlayer(player_first_name='joe', player_last_name='momma' + nums)
+            player = UserPlayer(player_first_name='joe', player_last_name='momma' + nums, player_team=self.team)
             player.save()
 
     def test_place_trade_loads(self):
-        self.login_user()
         self.set_up_team_with_players(True)
-        load_page = self.client.get('/' + str(self.second_user.id) + '/trade/')
+        load_page = self.client.get('/cloud_roni/' + str(self.second_user.id) + '/trade/')
 
         self.assertIn('Propose Trade', load_page.content)
 
     def test_submit_place_trade(self):
-        self.login_user()
         self.set_up_team_with_players(True)
         data = {'requesting_team_ids[]': self.player.id,
                 'receiving_team_ids[]': self.second_player.id
                 }
-        response = self.client.post('/' + str(self.second_user.id) + '/trade/', data)
+        response = self.client.post('/cloud_roni/' + str(self.second_user.id) + '/trade/', data)
 
         self.assertEqual(Trade.objects.count(), 1)
         self.assertIn(self.player, Trade.objects.last().proposing_team_players.all())
@@ -189,7 +203,7 @@ class CloudRoniViewsTests(TestCase):
         data = {'trade_id': new_trade.id,
                 'outcome': 'accept'}
 
-        response = self.client.post('/complete_trade/', data)
+        response = self.client.post('/cloud_roni/complete_trade/', data)
 
         self.assertIn("Accepted", response.content)
 
@@ -209,80 +223,81 @@ class CloudRoniViewsTests(TestCase):
         data = {'trade_id': new_trade.id,
                 'outcome': 'decline'}
 
-        response = self.client.post('/complete_trade/', data)
+        response = self.client.post('/cloud_roni/complete_trade/', data)
 
         self.assertIn("Declined", response.content)
 
     def test_search_players_with_valid_search(self):
         name_to_search = "joe"
-        request = RequestFactory().get('/players')
+        request = RequestFactory().get('/cloud_roni/players')
+        team = Team(team_name='jabs', team_owner_id=1, created_date=timezone.now(), league=self.league)
+        team.save()
+        self.team = team
         view = PlayersView.as_view()
         self.create_players_in_db()
+        request.user = self.new_user
         response = view(request, q=name_to_search)
 
         self.assertEqual(response.context_data['players_list'].count(), 4)
 
     def test_search_players_invalid_search(self):
         name_to_search = "joseph"
-        request = RequestFactory().get('/players')
+        request = RequestFactory().get('/cloud_roni/players')
         view = PlayersView.as_view()
+        request.user = self.new_user
         response = view(request, q=name_to_search)
 
         self.assertEqual(response.context_data['players_list'].count(), 0)
     
     def test_root_url_resolves_to_teams(self):
-        found = resolve('/')
+        found = resolve('/cloud_roni/')
 
         self.assertEqual(found.url_name, 'index')
 
     def test_teams_page_has_correct_info_with_no_teams(self):
-        content = self.home_page_request.content
+        content = self.team_index.content
 
         self.assertIn('These are not the teams you are looking for...', content)
 
     def test_teams_page_has_correct_info_with_teams(self):
-        Team(team_name='jabs', team_owner_id=1, created_date=timezone.now()).save()
-        reload_home_page = self.client.get('/')
+        Team(team_name='jabs', team_owner_id=1, created_date=timezone.now(), league=self.league).save()
+        reload_home_page = self.client.get('/cloud_roni/')
 
-        self.assertIn('<a href="/1/team/">1. jabs</a>', reload_home_page.content)
+        self.assertIn('<a href="/cloud_roni/1/team/">1. jabs</a>', reload_home_page.content)
 
     def test_teams_page(self):
-        team = Team(team_name='jabs', team_owner_id=1, created_date=timezone.now())
+        team = Team(team_name='jabs', team_owner_id=1, created_date=timezone.now(), league=self.league)
         team.save()
         UserPlayer(player_team=team, player_first_name='joe', player_last_name='momma').save()
-        team_page_request = self.client.get("/" + str(team.id) + "/team/")
+        team_page_request = self.client.get("/cloud_roni/" + str(team.id) + "/team/")
 
         self.assertIn('joe momma', team_page_request.content)
 
     def test_detailed_player_view(self):
         self.set_up_team_with_players()
-        self.login_user()
-        player_page_request = self.client.get("/" + str(self.player.player_team.id) + "/players/" + str(self.player.id) + "/")
+        player_page_request = self.client.get("/cloud_roni/" + str(self.player.player_team.id) + "/players/" + str(self.player.id) + "/")
 
         self.assertIn('joe momma', player_page_request.content)
 
 
     def test_add_point_view_with_error(self):
         self.set_up_team_with_players()
-        self.login_user()
-        response = self.client.post("/" + str(self.player.id) + "/add_point/", {'player_id': self.player.id})
+        response = self.client.post("/cloud_roni/" + str(self.player.id) + "/add_point/", {'player_id': self.player.id})
 
         self.assertTrue('Note is required' in response.content)
 
     def test_add_point_view_without_error(self):
         point_count = Point.objects.count()
         self.set_up_team_with_players()
-        self.login_user()
-        response = self.client.post("/" + str(self.player.id) + "/add_point/", {'note': "I am a note", 'point': Point.ONE})
+        response = self.client.post("/cloud_roni/" + str(self.player.id) + "/add_point/", {'note': "I am a note", 'point': Point.ONE})
 
         self.assertEqual(Point.objects.count(), point_count + 1)
         self.assertEqual(len(mail.outbox), 1)
 
     def test_create_player_view(self):
         self.set_up_team_with_players()
-        self.login_user()
         player_count = UserPlayer.objects.count()
-        response = self.client.post('/' + str(self.team.id) + '/create_player/',
+        response = self.client.post('/cloud_roni/' + str(self.team.id) + '/create_player/',
             {
                 'usage': UserPlayer.HEAVY_USE,
                 'player_first_name': 'Jarrod',
@@ -294,39 +309,35 @@ class CloudRoniViewsTests(TestCase):
 
     def test_create_player_view_with_error(self):
         self.set_up_team_with_players()
-        self.login_user()
         player_count = UserPlayer.objects.count()
-        response = self.client.post('/' + str(self.team.id) + '/create_player/')
+        response = self.client.post('/cloud_roni/' + str(self.team.id) + '/create_player/')
 
         self.assertTrue('Invalid Information!' in response.content)
 
     def test_create_team_view(self):
-        self.login_user()
-        response = self.client.post('/create_team/', {'team_name': 'Jabrones', 'team_owner': str(self.new_user.id)})
+        response = self.client.post('/cloud_roni/create_team/', {'team_name': 'Jabrones', 'team_owner': str(self.new_user.id)})
 
         self.assertEqual(Team.objects.count(), 1)
         self.assertRedirects(response, expected_url=reverse('cloud_roni:index'))
 
     def test_create_team_view_with_error(self):
-        self.login_user()
-        response = self.client.post('/create_team/')
+        response = self.client.post('/cloud_roni/create_team/')
 
         self.assertTrue('Invalid Information!' in response.content)
 
     def test_update_player_view(self):
         self.login_user()
         self.set_up_team_with_players()
-        response = self.client.get('/' + str(self.player.id) + '/update_player/')
+        response = self.client.get('/cloud_roni/' + str(self.player.id) + '/update_player/')
 
         self.assertTrue('joe' in response.content)
         self.assertTrue('momma' in response.content)
         self.assertTrue('Not Using' in response.content)
 
     def test_delete_player_view(self):
-        self.login_user()
         self.set_up_team_with_players()
         player_count = UserPlayer.objects.count()
-        response = self.client.post('/' + str(self.player.id) + '/delete_player/')
+        response = self.client.post('/cloud_roni/' + str(self.player.id) + '/delete_player/')
 
         self.assertEqual(UserPlayer.objects.count(), player_count - 1)
         self.assertRedirects(response, expected_url=reverse('cloud_roni:team', args=(self.team.id,)))
@@ -334,17 +345,23 @@ class CloudRoniViewsTests(TestCase):
 class PointFormTests(TestCase):
 
     def setUp(self):
-        self.home_page_request = self.client.get('/')
         user = User.objects.create(username='jab')
         user.set_password('1234')
         user.save()
         self.new_user = user
+        self.login_user()
+        self.team_index = self.client.get('/cloud_roni/')
+        league = League(name='league', owner=user, created_date=timezone.now(), signup_code="ehh")
+        league.save()
+        league.participants.add(user)
+        league.save()
+        self.league = league
 
     def login_user(self):
         self.client.login(username='jab',password='1234')
 
     def set_up_team_with_players(self):
-        team = Team(team_name='jabs', team_owner_id=1, created_date=timezone.now())
+        team = Team(team_name='jabs', team_owner_id=1, created_date=timezone.now(), league=self.league)
         team.save()
         self.team = team
         player = UserPlayer(player_team=team, player_first_name='joe', player_last_name='momma')
