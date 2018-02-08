@@ -3,12 +3,6 @@
     margin: auto;
 }
 
-td > a {
-    color: inherit;
-    font-weight: bold;
-    font-size: 22px;
-}
-
 .NU {
     color: #cc3300;
 }

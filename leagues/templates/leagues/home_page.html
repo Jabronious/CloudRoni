@@ -1,0 +1,31 @@
+{% extends 'home_page_base.html' %}
+{% load static %}
+{% load fontawesome %}
+
+{% block content%}
+<link rel="stylesheet" href="{% static 'leagues/css/leagues.css' %}">
+<script src="{% static 'leagues/js/leagues.js' %}"></script>
+{% if error_message %}<p style='text-align:center;'><strong>{{ error_message }}</strong></p>{% endif %}
+
+<div id="welcome-header">
+    <h1>Welcome to</h1>
+    <img class='large-logo' src="{% static 'CloudRoni/img/logo.png' %}">
+    <h1>CloudRoni</h1>
+</div>
+
+<div id="button-container">
+    <button class='button' id='sign-up-button'>Sign Up</button>
+    <a class='button a-link-button' id='sign-in-button' href="{% url 'users:login' %}">Sign In</a>
+</div>
+
+<div id='sign-up-container'>
+    <h3>Sign Up</h3>
+    <form role="form" class='create-user-form' action="{% url 'users:register' %}" method="post">
+	    {% csrf_token %}
+	    {{ form.as_p }}
+    <button class='button' type="submit">Create</button>
+    </form>
+    <a class='button a-link-button' id='sign-in-button' href="{% url 'users:login' %}">Sign In</a>
+</div>
+
+{% endblock content %}

@@ -20,33 +20,16 @@ form {
     float: left;
 }
 
-.login {
+#right-nav-bar > span {
+    margin: 10px 5px 10px 0;
     float: right;
     color: #FFF;
-    margin-right: 5px;
-    height: 100%;
-    max-width: 25%;
-    min-width: 165px;
-}
-
-.login > span {
-    margin: 10px 5px 10px 0;
-    float: left;
-}
-
-#nav-bar > a {
-    float: left;
-    height: 100%;
-    width: 5%;
-    color: #FFF;
-    text-decoration: none;
-    margin-left: 5px;
 }
 
 .login > a {
     color: #FFF;
     text-decoration: none;
-    float: left;
+    float: right;
     height: 100%;
 }
 
@@ -69,10 +52,10 @@ body {
     text-align: center;
 }
 
-#add-email-alert {
-    margin: auto;
-    width: 280px;
+.add-info-alert {
+    width: 100%;
     margin-top: 10px;
+    text-align: center;
 }
 
 .creation-button {
@@ -99,4 +82,46 @@ body {
     width: 100%;
     margin-top: 5px;
     text-align: center;
+}
+
+.create-form, .create-header {
+    text-align: center;
+}
+
+#left-nav-bar {
+    width: 45%;
+    float: left;
+}
+
+#left-nav-bar > a {
+    float: left;
+    height: 100%;
+    color: #FFF;
+    text-decoration: none;
+    margin-left: 5px;
+}
+
+#right-nav-bar {
+    width: 55%;
+    float: right;
+}
+
+#search-form {
+    float: left;
+    width: 400px;
+    margin: 8px 0;
+}
+
+.search-field {
+    float: left;
+    border: none;
+    height: 60%;
+    padding: 3px;
+}
+
+.search-button {
+    float: left;
+    height: 60%;
+    border: none;
+    background: #fff;
 }

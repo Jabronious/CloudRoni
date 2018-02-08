@@ -1,0 +1,62 @@
+#welcome-header {
+    width: 100%;
+    text-align: center;
+}
+
+.large-logo {
+    height: 400px;
+}
+
+.create-user-form > ul, .helptext {
+    display: none;
+}
+
+.create-user-form {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+#sign-up-container > h3 {
+    text-align: center;
+    width: 100%;
+}
+
+#sign-up-container {
+    display: none;
+    text-align: center;
+}
+
+#button-container > button {
+    margin: auto;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.a-link-button {
+    border: 2px outset #1e392a;
+    text-decoration: none;
+    padding: 5px;
+    margin: auto;
+    display: block;
+    width: 50px;
+    font-size: 13.3333px;
+    height: 15px;
+    cursor: default;
+}
+
+#leagues-table {
+    width: 1215px;
+    margin: auto;
+}
+
+.join-column {
+    width: 230px;
+}
+
+.join-column > input {
+    margin-right: 5px;
+}
+
+.error-message {
+    text-align: center;
+}

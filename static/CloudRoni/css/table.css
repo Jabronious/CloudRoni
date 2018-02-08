@@ -9,6 +9,8 @@ td, th {
     border: 1px solid #dddddd;
     text-align: left;
     padding: 8px;
+    max-width: 300px;
+    overflow-wrap: break-word;
 }
 
 th {
@@ -19,4 +21,18 @@ th {
 tr:nth-child(odd) {
     background-color: #3CC47C;
     color: #fff;
+}
+
+.button {
+    height: 35px;
+    background: #1e392a;
+    color: #fff;
+    font-weight: bold;
+    border-color: #1E3904;
+}
+
+td > a, td {
+    color: inherit;
+    font-weight: bold;
+    font-size: 22px;
 }
