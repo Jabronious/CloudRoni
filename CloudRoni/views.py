@@ -35,10 +35,13 @@ class PlayersView(generic.ListView):
 
 	def get_queryset(self):
 		query = self.request.GET.get('q')
+		league = League.objects.filter(participants=self.request.user)
+		teams = Team.objects.filter(league=league)
 		if query:
-			result = UserPlayer.objects.filter(player_first_name=query) | UserPlayer.objects.filter(player_last_name=query)
+			result = (UserPlayer.objects.filter(player_team=teams).filter(player_first_name=query) |
+				UserPlayer.objects.filter(player_team=teams).filter(player_last_name=query))
 		else:
-			result = UserPlayer.objects.all()
+			result = UserPlayer.objects.filter(player_team=teams)
 
 		return result
 
