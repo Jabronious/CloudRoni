@@ -67,7 +67,7 @@ def join_league(request):
 def home_page(request):
 	if request.user.is_authenticated():
 		try:
-			request.user.league
+			League.objects.get(participants=request.user)
 			return HttpResponseRedirect(reverse('cloud_roni:index'))
 		except:
 			return HttpResponseRedirect(reverse('leagues:leagues_index'))
