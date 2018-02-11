@@ -10,6 +10,7 @@ from users.models import PhoneNumber
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
+from leagues.models import League
 
 from twilio.rest import Client
 
@@ -25,7 +26,8 @@ class IndexView(generic.ListView):
 
 	def get_queryset(self):
 		"""Return all teams ordered by team_points"""
-		return Team.objects.all().order_by('-team_points').reverse()
+		league = League.objects.filter(participants=self.request.user)
+		return Team.objects.filter(league=league).order_by('-team_points').reverse()
 
 class PlayersView(generic.ListView):
 	template_name = 'players/all_players.html'
@@ -33,10 +35,13 @@ class PlayersView(generic.ListView):
 
 	def get_queryset(self):
 		query = self.request.GET.get('q')
+		league = League.objects.filter(participants=self.request.user)
+		teams = Team.objects.filter(league=league)
 		if query:
-			result = UserPlayer.objects.filter(player_first_name=query) | UserPlayer.objects.filter(player_last_name=query)
+			result = (UserPlayer.objects.filter(player_team=teams).filter(player_first_name=query) |
+				UserPlayer.objects.filter(player_team=teams).filter(player_last_name=query))
 		else:
-			result = UserPlayer.objects.all()
+			result = UserPlayer.objects.filter(player_team=teams)
 
 		return result
 
@@ -139,23 +144,23 @@ def create_player(request, team_id):
 
 @login_required
 def create_team(request):
-	form_class = TeamForm
-
 	if request.method == 'POST':
-		form = form_class(request.POST, request.FILES)
-
+		form = TeamForm(request.user, request.POST)
 		if form.is_valid():
 			new_team = form.save(commit=False)
 			new_team.created_date = timezone.now()
+			new_team.league = League.objects.get(participants=request.user)
 			new_team = form.save()
 
 			return HttpResponseRedirect(reverse('cloud_roni:index'))
 		else:
+			form_class = TeamForm(request.user)
 			return render(request, 'teams/create.html', {
 					'form': form_class,
 					'error_message': "Invalid Information!",
 				})
 
+	form_class = TeamForm(request.user)
 	return render(request, 'teams/create.html', {
 				'form': form_class,
 				})

@@ -7,6 +7,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from CloudRoni.models import Team, UserPlayer, Point
+from leagues.models import League
 from django.utils import timezone
 from django.urls import reverse
 
@@ -21,12 +22,17 @@ class CsvUploadsTests(TestCase):
         user.email = 'test_email@gmail.com'
         user.save()
         self.new_user = user
+        league = League(name='league', owner=user, created_date=timezone.now(), signup_code="ehh")
+        league.save()
+        league.participants.add(user)
+        league.save()
+        self.league = league
 
     def login_user(self):
         self.client.login(username='jab',password='1234')
         
     def set_up_team(self):
-        team = Team(team_name='jabs', team_owner_id=1, created_date=timezone.now())
+        team = Team(team_name='jabs', team_owner_id=1, created_date=timezone.now(), league=self.league)
         team.save()
         self.team = team
         

@@ -38,10 +38,17 @@
 }
 
 #register-form {
-    float: left;
-    margin-left: 370px;
+    text-align: center;
 }
 
 #register-form > ul {
     font-size: 12px;
+}
+
+#register-form > ul, .helptext {
+    display: none;
+}
+.errorlist {
+    display: block !important;
+    list-style-type: none;
 }
