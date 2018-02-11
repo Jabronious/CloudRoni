@@ -17,7 +17,8 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'', include('CloudRoni.urls', namespace='cloud_roni')),
+    url(r'', include('leagues.urls', namespace='leagues')),
+    url(r'cloud_roni/', include('CloudRoni.urls', namespace='cloud_roni')),
     url(r'^admin/', admin.site.urls),
     url(r'^users/', include('users.urls', namespace='users')),
     url(r'^csv/', include('csv_upload.urls', namespace='csv_upload')),

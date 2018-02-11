@@ -6,6 +6,7 @@ from django.db import models
 from django.utils import timezone
 from django.db.models import Sum, F
 from django.contrib.auth.models import User
+from leagues.models import League
 
 import pdb
 
@@ -15,6 +16,7 @@ class Team(models.Model):
     created_date = models.DateTimeField('date published')
     team_owner = models.ForeignKey(User)
     team_points = models.IntegerField(default=0)
+    league = models.ForeignKey(League)
 
     def __str__(self):
         return self.team_name

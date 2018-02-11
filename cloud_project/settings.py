@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'users',
     'fontawesome',
     'csv_upload',
+    'leagues',
 ]
 
 MIDDLEWARE = [

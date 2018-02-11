@@ -12,12 +12,13 @@ from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from users.models import PhoneNumber
 from django.utils import timezone
+from leagues.forms import LeagueForm
 
 import pdb
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse('cloud_roni:index'))
+    return render(request, 'leagues/home_page.html', {'form': UserCreationForm,})
 
 def register(request):
     if request.method != 'POST':
@@ -30,7 +31,7 @@ def register(request):
             authenticated_user = authenticate(username=new_user.username,
                 password=request.POST['password1'])
             login(request, authenticated_user)
-            return HttpResponseRedirect(reverse('cloud_roni:index'))
+            return HttpResponseRedirect(reverse('leagues:leagues_index'))
 
     context = {'form': form}
     return render(request, 'users/register.html', context)

@@ -1,0 +1,28 @@
+{% load static %}
+{% load fontawesome %}
+{% fontawesome_stylesheet %}
+{% load debug %}
+
+<script src="{% static 'CloudRoni/js/vendor/jquery/jquery.js' %}"></script>
+<script src="{% static 'CloudRoni/js/base.js' %}"></script>
+<link rel="stylesheet" href="{% static 'CloudRoni/css/base.css' %}">
+<link rel="stylesheet" href="{% static 'CloudRoni/css/table.css' %}">
+
+<div id='nav-bar'>
+    <div id='left-nav-bar'>
+        <div id='main-logo' class='image-container'>
+            <img src="{% static 'CloudRoni/img/logo_small.png' %}">
+        </div>
+    </div>
+</div>
+
+<div id='body' style='margin-top: 25px;'>
+{% block content %}{% endblock content %}
+</div>
+
+<div id='footer'>
+</div>
+
+<div id='powered-by' class='image-container'>
+    <img id='power-by-logo' src="{% static 'CloudRoni/img/power_by_logo.png' %}">
+</div>

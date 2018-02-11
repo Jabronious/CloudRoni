@@ -30,3 +30,9 @@ tr:nth-child(odd) {
     font-weight: bold;
     border-color: #1E3904;
 }
+
+td > a, td {
+    color: inherit;
+    font-weight: bold;
+    font-size: 22px;
+}

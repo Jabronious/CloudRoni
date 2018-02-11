@@ -1,0 +1,34 @@
+{% extends 'home_page_base.html' %}
+{% load static %}
+{% load fontawesome %}
+
+{% block content%}
+<link rel="stylesheet" href="{% static 'leagues/css/leagues.css' %}">
+<script src="{% static 'leagues/js/leagues.js' %}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(".join-league-button").on('click', function() {
+            joinLeague('{% url "leagues:join_league" %}', $(this).data('league-id'), $(this).siblings()[0].value);
+        });
+    });
+</script>
+
+<div id='leagues-table'>
+	<h1 class='page-header'>Join a Leagues</h1>
+	<p></p>
+	<a class='creation-button' href="{% url 'leagues:create_league' %}">{% fontawesome_icon 'plus-circle' %} Create New League</a>
+	<table>
+		<th>League Name</th>
+		<th>League Owner</th>
+		<th></th>
+		{% for league in leagues_list %}
+			<tr>
+				<td>{{ forloop.counter }}. {{ league.name }}</td>
+				<td>{{ league.owner }}</td>
+				<td class='join-column'><input type='text'/><button class='join-league-button button' data-league-id='{{ league.id }}'>Join</button></td>
+			</tr>
+	    {% endfor %}
+	</table>
+</div>
+
+{% endblock content %}
