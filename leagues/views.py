@@ -12,6 +12,7 @@ from django.urls import reverse
 from django.contrib.auth.forms import UserCreationForm
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
 import pdb
 
@@ -75,3 +76,14 @@ def home_page(request):
 	register_form_class = UserCreationForm
 	
 	return render(request, 'leagues/home_page.html', {'form': register_form_class,})
+
+@login_required
+def manage_league(request):
+	form = LeagueForm(request.POST or None, instance=request.user.league)
+	confirmation = ''
+
+	if request.method == "POST" and form.is_valid():
+		confirmation = 'Updated League!'
+		form.save()
+
+	return render(request, 'leagues/league_management.html', {'form': form, 'confirmation': confirmation})
