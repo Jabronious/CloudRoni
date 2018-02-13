@@ -31,6 +31,7 @@ def create_league(request):
 					'error_message': "You have already created a league.",
 				})
 			except:
+				form.cleaned_data['end_date']
 				new_league = form.save(commit=False)
 				new_league.created_date = timezone.now()
 				new_league.owner = request.user
@@ -84,6 +85,7 @@ def manage_league(request):
 
 	if request.method == "POST" and form.is_valid():
 		confirmation = 'Updated League!'
+		form.cleaned_data['end_date']
 		form.save()
 
 	return render(request, 'leagues/league_management.html', {'form': form, 'confirmation': confirmation})

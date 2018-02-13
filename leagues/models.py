@@ -12,6 +12,7 @@ class League(models.Model):
     participants = models.ManyToManyField(User, related_name='participants')
     created_date = models.DateTimeField('date created')
     signup_code = models.CharField(max_length=15, unique=True, blank=False)
+    end_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.name
