@@ -86,3 +86,26 @@ class LeagueViewTests(TestCase):
 
         self.assertEqual(response.status_code, 404)
         self.assertIn(response.content, 'Incorrect League Code')
+
+    def test_league_management_page_loads(self):
+        self.set_up_league()
+        self.login_user()
+
+        response = self.client.get('/manage_league/')
+
+        self.assertInHTML('<input type="text" name="name" value="league" required id="id_name" maxlength="200" />', response.content)
+        self.assertInHTML('<input type="text" name="signup_code" value="ehh" required id="id_signup_code" maxlength="15" />', response.content)
+
+    def test_league_management_update(self):
+        self.set_up_league()
+        self.login_user()
+
+        new_code = "new_code"
+        new_name = "new_name"
+        response = self.client.post('/manage_league/', {'name': new_name,
+                                                        'signup_code': new_code, 
+                                                        })
+
+        league = League.objects.last()
+        self.assertEqual(league.name, new_name)
+        self.assertEqual(league.signup_code, new_code)

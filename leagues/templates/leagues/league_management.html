@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load fontawesome %}
+{% load debug %}
+
+{% block content%}
+<link rel="stylesheet" href="{% static 'leagues/css/leagues.css' %}">
+<script src="{% static 'leagues/js/leagues.js' %}"></script>
+
+{% if confirmation %}<p class='add-info-alert'>{{ confirmation }}</p>{% endif %}
+
+<div id="league-manage-container">
+    <h3>League Information</h3>
+    <form role="form" class='league-manage-form' action="" method="post">
+    	{% csrf_token %}
+    	{{ form.as_p }}
+        <div class='button-holder button-div-100' style="margin-bottom: 5px;">
+        	<button class='button' name='submit'>Update</button>
+        </div>
+    </form>
+</div>
+
+{% endblock content %}
