@@ -112,7 +112,7 @@ def manage_league(request):
 
 def terminate_season(request):
 	league = request.user.league
-	if Team.objects.filter(league=league) < 3:
+	if Team.objects.filter(league=league).count() < 3:
 		form = LeagueForm(request.POST or None, instance=request.user.league)
 		return render(request, 'leagues/league_management.html', {'form': form, 'confirmation': 'League is too small to terminate :('})
 	end_season(league)
