@@ -1,5 +1,6 @@
 from django.http import Http404, HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect, render_to_response
+from django.core.exceptions import ObjectDoesNotExist
 from django.template import loader, RequestContext
 from django.urls import reverse
 from django.views import generic
@@ -54,8 +55,11 @@ class TradesView(generic.ListView):
 	context_object_name = 'trade_list'
 
 	def get_queryset(self):
-		team = Team.objects.get(team_owner=self.request.user)
-		result = Trade.objects.filter(receiving_team=team) | Trade.objects.filter(proposing_team=team)
+		try:
+			team = Team.objects.get(team_owner=self.request.user)
+			result = Trade.objects.filter(receiving_team=team) | Trade.objects.filter(proposing_team=team)
+		except ObjectDoesNotExist:
+			result = None
 		return result
 
 @login_required
