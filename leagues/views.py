@@ -75,6 +75,19 @@ class LeaguesListView(generic.ListView):
 		"""Return all teams ordered by team_points"""
 		return League.objects.all().order_by('-created_date')
 
+class PastSeasonListView(generic.ListView):
+	template_name = 'leagues/past_seasons.html'
+	context_object_name = 'past_season_list'
+
+	def get_queryset(self):
+		"""Return all teams ordered by seasons"""
+		try:
+			results = Season.objects.filter(league=self.request.user.league).order_by('-id')
+		except:
+			results = None
+		
+		return results
+
 @csrf_exempt
 def join_league(request):
 	league_code = request.POST.get('code')

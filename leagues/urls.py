@@ -13,4 +13,5 @@ urlpatterns = [
     url(r'^manage_league/$', views.manage_league, name='manage_league'),
     url(r'^start_new_season/$', views.start_new_season, name='start_new_season'),
     url(r'^terminate_season/$', views.terminate_season, name='terminate_season'),
+    url(r'^past_seasons/$', views.PastSeasonListView.as_view(), name='past_seasons'),
 ]
