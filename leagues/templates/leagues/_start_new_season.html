@@ -1,0 +1,24 @@
+{% load static %}
+{% load fontawesome %}
+{% fontawesome_stylesheet %}
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="{% static 'leagues/js/leagues.js' %}"></script>
+<script>
+  $( function() {
+    $( "#datepicker" ).datepicker();
+  } );
+  
+  $(document).ready(function() {
+        $("#start-season-button").on('click', function() {
+            startNewSeason('{% url "leagues:start_new_season" %}', $(this).siblings()[$(this).siblings().length - 1].children[0].value);
+        });
+    });
+  </script>
+  <h2>Start a New Season:</h2>
+  <p></p>
+  <span>Select End Date: <input type="text" id="datepicker"></span>
+  <button id='start-season-button' class='creation-button button'>Start Season</button>

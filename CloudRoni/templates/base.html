@@ -8,6 +8,20 @@
 <link rel="stylesheet" href="{% static 'CloudRoni/css/base.css' %}">
 <link rel="stylesheet" href="{% static 'CloudRoni/css/table.css' %}">
 
+{% if user.participants.last.ended %}
+    <div id='season-ended-container'>
+        <div class='pop-up'>
+            {% if user.league %}
+                {% include "leagues/_start_new_season.html" %}
+            {% else %}
+                <h3>Your Season has ended...</h3>
+                <p>
+                    The League owner will need to start another season
+                </p>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
 <div id='nav-bar'>
     <div id='left-nav-bar'>
         <div id='main-logo' class='image-container'>

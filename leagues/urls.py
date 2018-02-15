@@ -10,5 +10,6 @@ urlpatterns = [
     url(r'^create_league/$', views.create_league, name='create_league'),
     url(r'^leagues/$', views.LeaguesListView.as_view(), name='leagues_index'),
     url(r'^join_league/$', views.join_league, name='join_league'),
-    url(r'^manage_league/$', views.manage_league, name='manage_league')
+    url(r'^manage_league/$', views.manage_league, name='manage_league'),
+    url(r'^start_new_season/$', views.start_new_season, name='start_new_season'),
 ]

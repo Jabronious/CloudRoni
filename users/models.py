@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from twilio.rest import Client
 from twilio.base.exceptions import TwilioRestException
 from django.conf import settings
+from leagues.models import League
 import pdb
 
 # Create your models here.
