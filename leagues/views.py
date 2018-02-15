@@ -110,6 +110,14 @@ def manage_league(request):
 
 	return render(request, 'leagues/league_management.html', {'form': form, 'confirmation': confirmation})
 
+def terminate_season(request):
+	league = request.user.league
+	if Team.objects.filter(league=league) < 3:
+		form = LeagueForm(request.POST or None, instance=request.user.league)
+		return render(request, 'leagues/league_management.html', {'form': form, 'confirmation': 'League is too small to terminate :('})
+	end_season(league)
+	return HttpResponseRedirect(reverse('cloud_roni:index'))
+
 def end_season(league):
 	teams =  Team.objects.filter(league=league).order_by('-team_points').reverse()[:3]
 	winner_dict = {}
@@ -119,6 +127,7 @@ def end_season(league):
 						total_points=team.team_points)
 		winner.save()
 		winner_dict[idx] = winner
+		team.delete()
 
 	season = Season(league=league,
 					first=winner_dict[0],

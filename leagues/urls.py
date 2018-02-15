@@ -12,4 +12,5 @@ urlpatterns = [
     url(r'^join_league/$', views.join_league, name='join_league'),
     url(r'^manage_league/$', views.manage_league, name='manage_league'),
     url(r'^start_new_season/$', views.start_new_season, name='start_new_season'),
+    url(r'^terminate_season/$', views.terminate_season, name='terminate_season'),
 ]

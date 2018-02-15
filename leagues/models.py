@@ -26,5 +26,5 @@ class Winner(models.Model):
 class Season(models.Model):
     first = models.ForeignKey(Winner, related_name='first')
     second = models.ForeignKey(Winner, related_name='second')
-    thrid = models.ForeignKey(Winner, related_name='third')
+    third = models.ForeignKey(Winner, related_name='third')
     league = models.ForeignKey(League)
