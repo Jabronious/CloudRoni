@@ -126,24 +126,6 @@ body {
     background: #fff;
 }
 
-/*#season-ended-container {*/
-/*    position: absolute;*/
-/*    height: 100%;*/
-/*    width: 100%;*/
-/*    opacity: 0.7;*/
-/*    background: #000;*/
-/*}*/
-
-/*.pop-up {*/
-/*    height: 200px;*/
-/*    width: 300px;*/
-/*    background: #fff5e6;*/
-/*    position: fixed;*/
-/*    right: 40%;*/
-/*    top: 25%;*/
-/*    opacity: 1 !important;*/
-/*}*/
-
 #season-ended-container {
     text-align: center;
     background-color: rgba(17, 17, 17, 0.65);

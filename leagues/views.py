@@ -72,7 +72,7 @@ class LeaguesListView(generic.ListView):
 	context_object_name = 'leagues_list'
 
 	def get_queryset(self):
-		"""Return all teams ordered by team_points"""
+		"""Return all leagues ordered by created_date"""
 		return League.objects.all().order_by('-created_date')
 
 class PastSeasonListView(generic.ListView):
@@ -80,7 +80,7 @@ class PastSeasonListView(generic.ListView):
 	context_object_name = 'past_season_list'
 
 	def get_queryset(self):
-		"""Return all teams ordered by seasons"""
+		"""Return all season ordered by id"""
 		try:
 			results = Season.objects.filter(league=self.request.user.league).order_by('-id')
 		except:
