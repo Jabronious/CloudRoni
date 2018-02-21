@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/1.10/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.10/ref/settings/
 """
+from redis import ConnectionPool
 
 import os
 
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     'fontawesome',
     'csv_upload',
     'leagues',
+    'huey.contrib.djhuey',
 ]
 
 MIDDLEWARE = [
@@ -145,3 +147,39 @@ LOGIN_URL = '/users/login/'
 
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 1025
+
+pool = ConnectionPool(
+    host='localhost',
+    port=6379,
+    max_connections=100)
+
+HUEY = {
+    'name': 'huey-cloud-project-db',  # Use db name for huey.
+    'result_store': True,  # Store return values of tasks.
+    'events': True,  # Consumer emits events allowing real-time monitoring.
+    'store_none': False,  # If a task returns None, do not save to results.
+    'always_eager': False,  # If DEBUG=True, run synchronously.
+    'store_errors': True,  # Store error info if task throws exception.
+    'blocking': False,  # Poll the queue rather than do blocking pop.
+    'backend_class': 'huey.RedisHuey',  # Use path to redis huey by default,
+    'connection': {'connection_pool': pool, # Definitely you should use pooling!
+        # ... tons of other options, see redis-py for details.
+
+        # huey-specific connection parameters.
+        'read_timeout': 1,  # If not polling (blocking pop), use timeout.
+        'max_errors': 1000,  # Only store the 1000 most recent errors.
+        'url': None,  # Allow Redis config via a DSN.
+    },
+    'consumer': {
+        'workers': 64,
+        'worker_type': 'thread',
+        'initial_delay': 0.1,  # Smallest polling interval, same as -d.
+        'backoff': 1.15,  # Exponential backoff using this rate, -b.
+        'max_delay': 10.0,  # Max possible polling interval, -m.
+        'utc': True,  # Treat ETAs and schedules as UTC datetimes.
+        'scheduler_interval': 1,  # Check schedule every second, -s.
+        'periodic': True,  # Enable crontab feature.
+        'check_worker_health': True,  # Enable worker health checks.
+        'health_check_interval': 1,  # Check worker health every second.
+    },
+}

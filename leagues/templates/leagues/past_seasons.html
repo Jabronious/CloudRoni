@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load fontawesome %}
+
+{% block content%}
+<script src="{% static 'leagues/js/leagues.js' %}"></script>
+<link rel="stylesheet" href="{% static 'leagues/css/leagues.css' %}">
+
+<div id='past-season-table'>
+	<h1 class='page-header'>Past Seasons</h1>
+	{% if past_season_list %}
+	<table>
+		<th>Season Number</th>
+		<th>Winners</th>
+		{% for season in past_season_list %}
+			<tr>
+			    <td>Season No. {{ forloop.counter }}</td>
+				<td>
+				    <ol>
+				        <li>{{ season.first.team_name }}({{ season.first.individual }}) - Points: {{ season.first.total_points }}</li>
+				        <li>{{ season.second.team_name }}({{ season.second.individual }}) - Points: {{ season.second.total_points }}</li>
+				        <li>{{ season.third.team_name }}({{ season.third.individual }}) - Points: {{ season.third.total_points }}</li>
+				    </ol>
+				</td>
+			</tr>
+		{% endfor %}
+		
+	{% else %}
+		<p>There are no past seasons</p>
+	{% endif %}
+	</table>
+</div>
+
+
+{% endblock content %}

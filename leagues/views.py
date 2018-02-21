@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.shortcuts import render
 from django.http import HttpResponseNotFound
 from leagues.forms import LeagueForm
-from leagues.models import League
+from leagues.models import League, Winner, Season
 from django.utils import timezone
 from django.http import Http404, HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect, render_to_response
@@ -13,10 +13,30 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from CloudRoni.models import Team
+from cloud_project.settings import TIME_ZONE
+import dateutil.parser
+import datetime
+import pytz
 
 import pdb
 
 # Create your views here.
+@csrf_exempt
+def start_new_season(request):
+	end_date = dateutil.parser.parse(request.POST.get('date'))
+	end_date = pytz.timezone(TIME_ZONE).localize(end_date, is_dst=None)
+	if end_date.date() < datetime.date.today() or end_date.date() < datetime.date.today() + datetime.timedelta(weeks=1):
+		response = HttpResponse('Invalid Date - Select a date one week or more in the future')
+		response.status_code = 500
+		return response
+	else:
+		league = request.user.league
+		league.end_date = end_date
+		league.ended = False
+		league.save()
+		return JsonResponse({'url': reverse('cloud_roni:index')})
+
 def create_league(request):
 	form_class = LeagueForm
 
@@ -31,6 +51,7 @@ def create_league(request):
 					'error_message': "You have already created a league.",
 				})
 			except:
+				form.cleaned_data['end_date']
 				new_league = form.save(commit=False)
 				new_league.created_date = timezone.now()
 				new_league.owner = request.user
@@ -51,8 +72,21 @@ class LeaguesListView(generic.ListView):
 	context_object_name = 'leagues_list'
 
 	def get_queryset(self):
-		"""Return all teams ordered by team_points"""
+		"""Return all leagues ordered by created_date"""
 		return League.objects.all().order_by('-created_date')
+
+class PastSeasonListView(generic.ListView):
+	template_name = 'leagues/past_seasons.html'
+	context_object_name = 'past_season_list'
+
+	def get_queryset(self):
+		"""Return all season ordered by id"""
+		try:
+			results = Season.objects.filter(league=self.request.user.league).order_by('-id')
+		except:
+			results = None
+		
+		return results
 
 @csrf_exempt
 def join_league(request):
@@ -84,6 +118,38 @@ def manage_league(request):
 
 	if request.method == "POST" and form.is_valid():
 		confirmation = 'Updated League!'
+		form.cleaned_data['end_date']
 		form.save()
 
 	return render(request, 'leagues/league_management.html', {'form': form, 'confirmation': confirmation})
+
+def terminate_season(request):
+	league = request.user.league
+	
+	#Requirement of three teams in a league
+	if Team.objects.filter(league=league).count() < 3:
+		form = LeagueForm(request.POST or None, instance=request.user.league)
+		return render(request, 'leagues/league_management.html', {'form': form, 'confirmation': 'League is too small to terminate :('})
+	end_season(league)
+	return HttpResponseRedirect(reverse('cloud_roni:index'))
+
+def end_season(league):
+	teams =  Team.objects.filter(league=league).order_by('-team_points').reverse()[:3]
+	winner_dict = {}
+	for idx, team in enumerate(teams):
+		winner = Winner(individual=str(team.team_owner),
+						team_name=str(team.team_name),
+						total_points=team.team_points)
+		winner.save()
+		winner_dict[idx] = winner
+		team.delete()
+
+	season = Season(league=league,
+					first=winner_dict[0],
+					second=winner_dict[1],
+					third=winner_dict[2])
+	season.save()
+
+	league.ended = True
+	league.end_date = None
+	league.save()

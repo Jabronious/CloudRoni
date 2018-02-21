@@ -8,6 +8,8 @@ install:
   - pip install coverage
   - pip install twilio
   - pip install mock
+  - pip install huey[backends]
+  - pip install python-dateutil
 script:
   - python manage.py test
   - coverage run --source='.' manage.py test

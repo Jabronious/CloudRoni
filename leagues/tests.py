@@ -2,9 +2,14 @@
 from __future__ import unicode_literals
 
 from django.test import TestCase
-from leagues.models import League
+from leagues.models import League, Season, Winner
 from django.contrib.auth.models import User
 from django.utils import timezone
+import datetime
+from cloud_project.settings import TIME_ZONE
+from CloudRoni.models import Team
+from leagues.views import end_season
+import pytz
 
 import pdb
 
@@ -19,12 +24,30 @@ class LeagueViewTests(TestCase):
         self.user = user
 
     def set_up_league(self):
-        new_league = League()
         league = League(name='league', owner=self.user, created_date=timezone.now(), signup_code="ehh")
         league.save()
         league.participants.add(self.user)
         league.save()
         self.league = league
+
+    def set_up_endable_league(self):
+        for i in range(0,3):
+            user = User.objects.create(username='jab' + str(i))
+            user.set_password('1234')
+            user.email = 'test_email@gmail.com'
+            user.save()
+        users = User.objects.all()
+        league = League(name='endable_league', owner=User.objects.get(username='jab1'), created_date=timezone.now(), signup_code="ehh")
+        league.save()
+        for idx, user in enumerate(users):
+            league.participants.add(user)
+            league.save()
+            team = Team(team_name=str(user),
+                        created_date=timezone.now(),
+                        team_owner=user,
+                        team_points = idx,
+                        league=league)
+            team.save()
 
     def login_user(self):
         self.client.login(username='jab',password='1234')
@@ -52,13 +75,30 @@ class LeagueViewTests(TestCase):
 
         self.assertIn('Create A League', response.content)
 
-    def test_create_team_user_created_league(self):
+    def test_create_league_unsuccessful(self):
         self.set_up_league()
         self.login_user()
+        date = timezone.now() + datetime.timedelta(weeks=1)
         response = self.client.post('/create_league/', {'name': 'Wassup',
-                                                        'signup_code': 'blahaaaa'})
+                                                        'signup_code': 'blahaaaa',
+                                                        'end_date_day': str(date.day),
+                                                        'end_date_month': str(date.month),
+                                                        'end_date_year': str(date.year),
+        })
 
         self.assertIn('You have already created a league.', response.content)
+
+    def test_create_league_successfully(self):
+        self.login_user()
+        date = timezone.now() + datetime.timedelta(weeks=1)
+        response = self.client.post('/create_league/', {'name': 'Wassup',
+                                                        'signup_code': 'blahaaaa',
+                                                        'end_date_day': str(date.day),
+                                                        'end_date_month': str(date.month),
+                                                        'end_date_year': str(date.year),
+        })
+
+        self.assertRedirects(response, '/cloud_roni/')
 
     def test_create_team_with_invalid_info(self):
         response = self.client.post('/create_league/')
@@ -102,10 +142,73 @@ class LeagueViewTests(TestCase):
 
         new_code = "new_code"
         new_name = "new_name"
+        new_date = timezone.now() + datetime.timedelta(weeks=1)
         response = self.client.post('/manage_league/', {'name': new_name,
-                                                        'signup_code': new_code, 
+                                                        'signup_code': new_code,
+                                                        'end_date_day': str(new_date.day),
+                                                        'end_date_month': str(new_date.month),
+                                                        'end_date_year': str(new_date.year),
                                                         })
 
         league = League.objects.last()
         self.assertEqual(league.name, new_name)
         self.assertEqual(league.signup_code, new_code)
+        self.assertEqual(league.end_date.day, new_date.day)
+        self.assertEqual(league.end_date.month, new_date.month)
+        self.assertEqual(league.end_date.year, new_date.year)
+
+    def test_terminating_season_successfully(self):
+        self.set_up_endable_league()
+        self.client.login(username='jab1',password='1234')
+
+        response = self.client.post('/terminate_season/')
+
+        self.assertEqual(Season.objects.count(), 1)
+        self.assertEqual(Season.objects.last().first.individual, str(User.objects.first()))
+
+    def test_terminating_season_unsuccessfully(self):
+        self.set_up_league()
+        self.login_user()
+
+        response = self.client.post('/terminate_season/')
+
+        self.assertIn('League is too small to terminate', response.content)
+
+    def test_past_season_view_with_season_created(self):
+        self.set_up_endable_league()
+        self.client.login(username='jab1',password='1234')
+
+        self.client.post('/terminate_season/')
+        response = self.client.get('/past_seasons/')
+
+        self.assertIn('Season No. 1', response.content)
+
+    def test_past_season_view_without_season_created(self):
+        self.set_up_endable_league()
+        self.client.login(username='jab1',password='1234')
+
+        response = self.client.get('/past_seasons/')
+        
+        self.assertEqual(0, response.context_data['past_season_list'].count())
+        self.assertIn('There are no past seasons', response.content)
+
+    def test_start_new_season_successfully(self):
+        self.set_up_league()
+        self.login_user()
+        eligible_date = timezone.now().date() + datetime.timedelta(weeks=1)
+        
+        response = self.client.post('/start_new_season/', {'date': str(eligible_date)})
+        
+        user = User(id=self.user.id)
+        self.assertJSONEqual(response.content, {'url': '/cloud_roni/'})
+        self.assertFalse(user.league.ended)
+        self.assertEqual(user.league.end_date.date(), eligible_date)
+
+    def test_start_new_season_unsuccessfully(self):
+        self.set_up_league()
+        self.login_user()
+        ineligible_date = timezone.now().date()
+        
+        response = self.client.post('/start_new_season/', {'date': str(ineligible_date)})
+
+        self.assertContains(response, 'Invalid Date - Select a date one week or more in the future', status_code=500)
