@@ -126,16 +126,17 @@ def create_player(request, team_id):
 	team = get_object_or_404(Team, pk=team_id)
 	form_class = UserPlayerForm
 	error_message = ''
-	
+
 	if not League.objects.get(participants=request.user).drafted:
 		error_message = 'Your league has not drafted yet!'
 
-	if request.method == 'POST' and not League.objects.get(participants=request.user).drafted:
+	if request.method == 'POST' and League.objects.get(participants=request.user).drafted:
 		form = form_class(request.POST, request.FILES)
-		
+
 		if form.is_valid():
 			new_player = form.save(commit=False)
 			new_player.player_team = team
+			new_player.league = team.league
 			new_player.save()
 			return HttpResponseRedirect(reverse('cloud_roni:team', args= (team.id,)))
 		else:

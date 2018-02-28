@@ -36,7 +36,7 @@ class TeamModelTests(TestCase):
     def test_team_has_players(self):
         team = Team(created_date=timezone.now(), id=1, team_owner=self.user, league=self.league)
         team.save()
-        player = UserPlayer(player_team=team, id=1)
+        player = UserPlayer(player_team=team, id=1, league=self.league)
         player.save()
 
         self.assertIs(team.players_present(), True)
@@ -50,10 +50,40 @@ class TeamModelTests(TestCase):
     def test_filter_points(self):
         team = Team(created_date=timezone.now(), id=1, team_owner=self.user, league=self.league)
         team.save()
-        player = UserPlayer(player_team=team, id=1, points_scored=1)
+        player = UserPlayer(player_team=team, id=1, points_scored=1, league=self.league)
         player.save()
 
         self.assertIs(team.filter_team_points(), 1)
+
+    def test_get_player_set(self):
+        team = Team(created_date=timezone.now(), id=1, team_owner=self.user, league=self.league)
+        team.save()
+        player = UserPlayer(player_team=team, id=1, league=self.league)
+        player.save()
+
+        self.assertEqual(team.get_player_set().count(), 1)
+        self.assertEqual(team.get_player_set().first(), player)
+
+class PointModelTests(TestCase):
+    def setUp(self):
+        user = User(username='jr.merryman', password='rabble')
+        user.save()
+        self.user = user
+        league = League(name='league', owner=user, created_date=timezone.now(), signup_code="ehh")
+        league.save()
+        league.participants.add(user)
+        league.save()
+        self.league = league
+        team = Team(created_date=timezone.now(), id=1, team_owner=self.user, league=self.league)
+        player = UserPlayer(player_team=team, id=1, league=self.league)
+        self.team = team
+        self.player = player
+
+    def test_str(self):
+        new_point = Point(player=self.player, point=1, note='meow', point_owner=self.user, team=self.team)
+        new_point.save()
+
+        self.assertEqual(str(new_point), '1')
 
 class TradeModelTests(TestCase):
     
@@ -81,13 +111,13 @@ class TradeModelTests(TestCase):
         #first team with players
         first_team = Team(team_name='jabs', team_owner_id=first_user.id, created_date=timezone.now(), league=self.league)
         first_team.save()
-        first_player = UserPlayer(player_team=first_team, player_first_name='joe', player_last_name='momma')
+        first_player = UserPlayer(player_team=first_team, player_first_name='joe', player_last_name='momma', league=league)
         first_player.save()
 
         #second team with players
         second_team = Team(team_name='jabronis', team_owner_id=second_user.id, created_date=timezone.now(), league=self.league)
         second_team.save()
-        second_player = UserPlayer(player_team=second_team, player_first_name='joseph', player_last_name='momma')
+        second_player = UserPlayer(player_team=second_team, player_first_name='joseph', player_last_name='momma', league=league)
         second_player.save()
 
         #make the trade sucka!
@@ -135,7 +165,7 @@ class CloudRoniViewsTests(TestCase):
         team = Team(team_name='jabs', team_owner_id=1, created_date=timezone.now(), league=self.league)
         team.save()
         self.team = team
-        player = UserPlayer(player_team=team, player_first_name='joe', player_last_name='momma')
+        player = UserPlayer(player_team=team, player_first_name='joe', player_last_name='momma', league=self.league)
         player.save()
         self.player = player
         
@@ -148,7 +178,7 @@ class CloudRoniViewsTests(TestCase):
             second_team = Team(team_name='jabronis', team_owner_id=user.id, created_date=timezone.now(), league=self.league)
             second_team.save()
             self.second_team = second_team
-            player = UserPlayer(player_team=second_team, player_first_name='joseph', player_last_name='momma')
+            player = UserPlayer(player_team=second_team, player_first_name='joseph', player_last_name='momma', league=self.league)
             player.save()
             self.second_player = player
 
@@ -156,7 +186,7 @@ class CloudRoniViewsTests(TestCase):
         num_arr = ["1","2","3","4"]
         
         for nums in num_arr:
-            player = UserPlayer(player_first_name='joe', player_last_name='momma' + nums, player_team=self.team)
+            player = UserPlayer(player_first_name='joe', player_last_name='momma' + nums, player_team=self.team, league=self.league)
             player.save()
 
     def test_place_trade_loads(self):
@@ -268,7 +298,7 @@ class CloudRoniViewsTests(TestCase):
     def test_teams_page(self):
         team = Team(team_name='jabs', team_owner_id=1, created_date=timezone.now(), league=self.league)
         team.save()
-        UserPlayer(player_team=team, player_first_name='joe', player_last_name='momma').save()
+        UserPlayer(player_team=team, player_first_name='joe', player_last_name='momma', league=self.league).save()
         team_page_request = self.client.get("/cloud_roni/" + str(team.id) + "/team/")
 
         self.assertIn('joe momma', team_page_request.content)
@@ -297,6 +327,8 @@ class CloudRoniViewsTests(TestCase):
     def test_create_player_view(self):
         self.set_up_team_with_players()
         player_count = UserPlayer.objects.count()
+        self.team.league.drafted = True
+        self.team.league.save()
         response = self.client.post('/cloud_roni/' + str(self.team.id) + '/create_player/',
             {
                 'usage': UserPlayer.HEAVY_USE,
@@ -309,10 +341,17 @@ class CloudRoniViewsTests(TestCase):
 
     def test_create_player_view_with_error(self):
         self.set_up_team_with_players()
-        player_count = UserPlayer.objects.count()
+        self.team.league.drafted = True
+        self.team.league.save()
         response = self.client.post('/cloud_roni/' + str(self.team.id) + '/create_player/')
 
-        self.assertTrue('Invalid Information!' in response.content)
+        self.assertTrue('Form is invalid!' in response.content)
+
+    def test_create_player_view_without_league_draft(self):
+        self.set_up_team_with_players()
+        response = self.client.post('/cloud_roni/' + str(self.team.id) + '/create_player/')
+
+        self.assertTrue('Your league has not drafted yet!' in response.content)
 
     def test_create_team_view(self):
         response = self.client.post('/cloud_roni/create_team/', {'team_name': 'Jabrones', 'team_owner': str(self.new_user.id)})
@@ -364,7 +403,7 @@ class PointFormTests(TestCase):
         team = Team(team_name='jabs', team_owner_id=1, created_date=timezone.now(), league=self.league)
         team.save()
         self.team = team
-        player = UserPlayer(player_team=team, player_first_name='joe', player_last_name='momma')
+        player = UserPlayer(player_team=team, player_first_name='joe', player_last_name='momma', league=self.league)
         player.save()
         self.player = player
 

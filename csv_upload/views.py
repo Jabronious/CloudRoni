@@ -27,7 +27,7 @@ def upload_csv(request, team_id):
         csv_file = request.FILES["csv_file"]
         if not csv_file.name.endswith('.csv'):
             error_message = 'File is not CSV type'
-            return render(request, 'team/detail.html', {
+            return render(request, 'teams/detail.html', {
 				'team': team,
 				'error_message': error_message,
 			})
