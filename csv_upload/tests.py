@@ -41,7 +41,7 @@ class CsvUploadsTests(TestCase):
         self.set_up_team()
         myfile = open('csv_upload/csv_test_file.csv','r') 
         response = self.client.post('/csv/' + str(self.team.id) + '/upload/csv/', {'csv_file':myfile})
-        
+
         self.assertIs(self.team.players_present(), True)
         self.assertRedirects(response, expected_url=reverse('cloud_roni:team', args=(self.team.id,)))
     

@@ -37,7 +37,6 @@ def upload_csv(request, team_id):
         lines = file_data.split("\r")
         if len(lines) == 1:
             lines = file_data.split("\n")
-
         headers = {}
         for line in lines:
             fields = line.split(",")
@@ -58,6 +57,7 @@ def upload_csv(request, team_id):
                         player_last_name=player_hash['player_last_name'],
                         usage=player_hash['usage'],
                         player_team=team,
+                        league=team.league,
                         )
                 except Exception as e:
                     pass
