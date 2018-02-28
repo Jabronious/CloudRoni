@@ -36,13 +36,13 @@ class PlayersView(generic.ListView):
 
 	def get_queryset(self):
 		query = self.request.GET.get('q')
-		league = League.objects.filter(participants=self.request.user)
+		league = League.objects.get(participants=self.request.user)
 		teams = Team.objects.filter(league=league)
 		if query:
-			result = (UserPlayer.objects.filter(player_team=teams).filter(player_first_name=query) |
-				UserPlayer.objects.filter(player_team=teams).filter(player_last_name=query))
+			result = (UserPlayer.objects.filter(league=league).filter(player_first_name=query) |
+				UserPlayer.objects.filter(league=league).filter(player_last_name=query))
 		else:
-			result = UserPlayer.objects.filter(player_team=teams)
+			result = UserPlayer.objects.filter(league=league)
 
 		return result
 
@@ -125,25 +125,31 @@ def add_point(request, player_id):
 def create_player(request, team_id):
 	team = get_object_or_404(Team, pk=team_id)
 	form_class = UserPlayerForm
+	error_message = ''
+	
+	if not League.objects.get(participants=request.user).drafted:
+		error_message = 'Your league has not drafted yet!'
 
-	if request.method == 'POST':
+	if request.method == 'POST' and not League.objects.get(participants=request.user).drafted:
 		form = form_class(request.POST, request.FILES)
-
+		
 		if form.is_valid():
 			new_player = form.save(commit=False)
 			new_player.player_team = team
 			new_player.save()
 			return HttpResponseRedirect(reverse('cloud_roni:team', args= (team.id,)))
 		else:
+			error_message = "Form is invalid!"
 			return render(request, 'players/create.html', {
 					'form': form_class,
 					'team': team,
-					'error_message': "Invalid Information!",
+					'error_message': error_message,
 				})
 
 	return render(request, 'players/create.html', {
 				'form': form_class,
 				'team': team,
+				'error_message': error_message
 				})
 
 @login_required

@@ -1,0 +1,24 @@
+.three-column {
+    width: 33%;
+    text-align: center;
+    float: left;
+    
+}
+
+#current-draftee, #available-players {
+    height: 100%;
+    border-right: solid 2px;
+}
+
+#draft-dashboard {
+    height: 100vw;
+}
+
+ol {
+    float: left;
+    text-align: left;
+}
+
+.draft-button {
+    float: right;
+}

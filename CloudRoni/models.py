@@ -24,6 +24,9 @@ class Team(models.Model):
     def players_present(self):
         return UserPlayer.objects.filter(player_team=self).count() > 0
 
+    def get_player_set(self):
+        return UserPlayer.objects.filter(player_team=self)
+
     def filter_team_points(self):
         players = UserPlayer.objects.filter(player_team=self)
         return players.aggregate(Sum('points_scored')).get('points_scored__sum', 0)
@@ -43,7 +46,7 @@ class UserPlayer(models.Model):
         (NOT_USING, 'Not Using'),
     )
     player_team = models.ForeignKey(Team,
-                                    on_delete=models.CASCADE,
+                                    on_delete=models.SET_NULL,
                                     null=True)
     player_first_name = models.CharField(max_length=20)
     player_last_name = models.CharField(max_length=20)
@@ -52,6 +55,7 @@ class UserPlayer(models.Model):
         max_length=2,
         choices=USAGE_CHOICES,
         default=NOT_USING,)
+    league = models.ForeignKey(League)
 
     def __str__(self):
         return self.player_first_name + ' ' + self.player_last_name

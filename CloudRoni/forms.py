@@ -13,7 +13,7 @@ CHOICES=[('HU', 'Heavy Usage'),
 class UserPlayerForm(ModelForm):
 	class Meta:
 		model = UserPlayer
-		exclude = ['player_team', 'points_scored']
+		exclude = ['player_team', 'points_scored', 'league']
 		
 class TeamForm(ModelForm):
     class Meta:
