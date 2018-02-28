@@ -138,3 +138,16 @@ class DraftViewsTests(TestCase):
                                                             })
 
         self.assertJSONEqual(response.content, {'ended': True,'url': reverse('drafts:end_draft')})
+
+    def test_end_draft(self):
+        self.login_user()
+        #upload players
+        myfile = open('csv_upload/csv_test_file.csv','r') 
+        self.client.post('/csv/upload/csv/', {'csv_file':myfile})
+        
+        self.client.get('/draft/start_draft/')
+
+        response = self.client.get('/draft/end_draft/')
+
+        self.assertEqual(Draft.objects.all().count(), 0)
+        self.assertJSONEqual(response.content, {'url': reverse('cloud_roni:index')})
