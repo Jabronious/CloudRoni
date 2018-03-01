@@ -41,7 +41,7 @@
 					{% if team.get_past_points %}
 						{% for point in team.get_past_points %}
 							<tr>
-								<td>{{ point.created|date:"m/d/Y H:i" }}</td>
+								<td>{{ point.created|date:"m/d/Y" }}</td>
 								<td>{{ point.note }}</td>
 								<td>{{ point.point }}</td>
 							</tr>

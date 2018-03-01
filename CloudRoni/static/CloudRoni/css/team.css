@@ -38,7 +38,11 @@
 }
 
 .point-set-container {
-    width: 30%;
-    margin: 0 20px 10px 20px;
+    width: 50%;
     float: left;
+    margin-bottom: 10px;
+}
+
+.point-set-container > th {
+    height: 40px;
 }
