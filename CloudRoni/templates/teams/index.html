@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load fontawesome %}
+{% debug %}
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'CloudRoni/css/team.css' %}">
@@ -26,6 +27,32 @@
 		<p>These are not the teams you are looking for...</p>
 {% endif %}
 	</table>
+	<div id='point-breakdown'>
+		<h3 id='point-breakdown-header'>Point Break Down</h3>
+		{% for team in teams_list %}
+			<div class='point-set-container'>
+				<table>
+					<caption>
+						{{ forloop.counter }}. {{ team.team_name }}
+					</caption>
+					<th>Created</th>
+					<th>Note</th>
+					<th>Point: {{ team.team_points }}</th>
+					{% if team.get_past_points %}
+						{% for point in team.get_past_points %}
+							<tr>
+								<td>{{ point.created|date:"m/d/Y" }}</td>
+								<td>{{ point.note }}</td>
+								<td>{{ point.point }}</td>
+							</tr>
+						{% endfor %}
+					{% else %}
+						<tr><td colspan='3'>There have been not points scored yet.</td></tr>
+					{% endif %}
+				</table>
+			</div>
+		{% endfor %}
+	</div>
 </div>
 
 {% endblock content %}

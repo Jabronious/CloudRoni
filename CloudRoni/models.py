@@ -34,6 +34,9 @@ class Team(models.Model):
     def was_created_recently(self):
         return self.created_date <= timezone.now() - datetime.timedelta(days=1)
 
+    def get_past_points(self):
+        return Point.objects.filter(team=str(self), created__lte=datetime.datetime.today(), created__gt=datetime.datetime.today()-datetime.timedelta(days=7))
+
 class UserPlayer(models.Model):
     HEAVY_USE = 'HU'
     MODERATE_USE = 'MU'
@@ -77,6 +80,7 @@ class Point(models.Model):
     note = models.TextField(max_length=200)
     point_owner = models.ForeignKey(User)
     team = models.TextField(max_length=200)
+    created = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return str(self.point)

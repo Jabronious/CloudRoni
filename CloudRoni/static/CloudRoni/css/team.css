@@ -31,3 +31,18 @@
     text-align: center;
     margin-top: 10px;
 }
+
+#point-breakdown-header {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.point-set-container {
+    width: 50%;
+    float: left;
+    margin-bottom: 10px;
+}
+
+.point-set-container > th {
+    height: 40px;
+}
