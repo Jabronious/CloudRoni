@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'csv_upload',
     'leagues',
     'huey.contrib.djhuey',
+    'drafts',
 ]
 
 MIDDLEWARE = [

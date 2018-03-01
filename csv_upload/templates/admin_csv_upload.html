@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load fontawesome %}
+
+{% block content%}
+<script src="{% static 'csv_upload/js/csv_upload.js' %}"></script>
+
+<link rel="stylesheet" href="{% static 'csv_upload/css/csv_upload.css' %}">
+
+<div id='csv-info'>
+    <div id='csv-info-inner'>
+        <span>In order to upload players you need will need to use these headers:</span>
+        <ol>
+            <li>usage</li>
+            <li>player_first_name</li>
+            <li>player_last_name</li>
+        </ol>
+    </div>
+</div>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<div class='form-container'>
+    <form id='csv-form' action="{% url 'csv_upload:admin_upload_csv' %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+        <div>
+            <input class='inputfile' type="file" name="csv_file" id="csv_file" required="True">
+        </div>
+        <button class='upload-btn'>{% fontawesome_icon 'upload' %} Upload</button>
+    </form>
+</div>
+{% endblock content %}

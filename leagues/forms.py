@@ -25,4 +25,4 @@ class LeagueForm(ModelForm):
 
 	class Meta:
 		model = League
-		exclude = ['created_date', 'participants', 'owner', 'ended']
+		exclude = ['created_date', 'participants', 'owner', 'ended', 'drafted']

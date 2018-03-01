@@ -126,7 +126,7 @@ body {
     background: #fff;
 }
 
-#season-ended-container {
+#pop-up-container {
     text-align: center;
     background-color: rgba(17, 17, 17, 0.65);
     position: absolute;
@@ -138,10 +138,14 @@ body {
     position: fixed;
     max-width: 350px;
     background-color: #fff5e6;
-    border: 1px solid ##1e392a;
+    border: 1px solid #1e392a;
     padding: 5px;
     height: auto;
     right: 40%;
     top: 25%;
     overflow: visible;
+}
+
+.error-message {
+    text-align: center;
 }

@@ -17,9 +17,15 @@
     	<th>Usage</th>
 		{% for player in players_list %}
 			<tr>
-				<td><a href="{% url 'cloud_roni:players' player.player_team.id player.id %}">{{ player }}</a></td>
-				<td><a href="{% url 'cloud_roni:team' player.player_team.id %}">{{ player.player_team.team_name }}</a></td>
-				<td>{{ player.points_scored }}</td>
+				{% if player.player_team %}
+					<td><a href="{% url 'cloud_roni:players' player.player_team.id player.id %}">{{ player }}</a></td>
+					<td><a href="{% url 'cloud_roni:team' player.player_team.id %}">{{ player.player_team.team_name }}</a></td>
+					<td>{{ player.points_scored }}</td>
+				{% else %}
+					<td>{{ player }}</td>
+					<td>No Team</td>
+					<td>N/A</td>
+				{% endif %}
     			<td class='{{ player.usage }}'>{{ player.usage }}</td>
 			</tr>
 		{% endfor %}

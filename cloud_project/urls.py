@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^users/', include('users.urls', namespace='users')),
     url(r'^csv/', include('csv_upload.urls', namespace='csv_upload')),
+    url(r'^draft/', include('drafts.urls', namespace='drafts')),    
 ]

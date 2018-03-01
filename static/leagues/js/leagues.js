@@ -31,3 +31,23 @@ function joinLeague(url, league_id, code) {
         }
     });
 }
+
+function startNewSeason(url, date) {
+    if(date == '') {
+        errorMessage('No date selected')
+        return;
+    }
+
+    $.ajax({
+        url: url,
+        data: { 'date': date },
+        type: 'POST',
+        dataType: 'json',
+        success: function (data) {
+            window.location.href = data.url;
+        },
+        error: function (data) {
+            errorMessage(data.responseText)
+        }
+    });
+}

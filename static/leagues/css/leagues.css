@@ -60,3 +60,12 @@
 .error-message {
     text-align: center;
 }
+
+#league-manage-container {
+    text-align: center;
+}
+
+#past-season-table {
+    width: 1215px;
+    margin: auto;
+}

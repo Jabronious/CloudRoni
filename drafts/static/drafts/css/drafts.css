@@ -1,0 +1,63 @@
+.three-column {
+    width: 33%;
+    text-align: center;
+    float: left;
+    
+}
+
+#current-draftee, #available-players {
+    height: 100%;
+    border-right: solid 2px;
+}
+
+#draft-dashboard {
+    height: 100vw;
+}
+
+ol {
+    float: left;
+    text-align: left;
+}
+
+.draft-button {
+    float: right;
+}
+
+#countdown {
+    float: left;
+    width: 99%;
+    background: none;
+    border: none;
+    margin-bottom: 5px;
+}
+
+.avail-player-li {
+    width: 100%;
+    margin-bottom: 5px;
+    float: left;
+}
+
+#available-players-header, .header {
+    float: left;
+    width: 100%;
+}
+
+.waiting-team {
+    float: left;
+    width: 100%;
+    background-color: #3CC47C;
+    color: #fff;
+    margin-left: 5px;
+}
+
+.waiting-team > h4 {
+    background-color: #1e392a;
+    color: #fff;
+    margin: 0;
+}
+
+.five-px-spacer {
+    float: left;
+    height: 5px;
+    width: 100%;
+}

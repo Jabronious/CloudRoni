@@ -13,7 +13,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-from CloudRoni.models import Team
+from CloudRoni.models import Team, UserPlayer
 from cloud_project.settings import TIME_ZONE
 import dateutil.parser
 import datetime
@@ -34,6 +34,7 @@ def start_new_season(request):
 		league = request.user.league
 		league.end_date = end_date
 		league.ended = False
+		league.drafted = False
 		league.save()
 		return JsonResponse({'url': reverse('cloud_roni:index')})
 
@@ -135,6 +136,8 @@ def terminate_season(request):
 
 def end_season(league):
 	teams =  Team.objects.filter(league=league).order_by('-team_points').reverse()[:3]
+	players = UserPlayer.objects.filter(player_team=teams)
+	players.update(player_team=None)
 	winner_dict = {}
 	for idx, team in enumerate(teams):
 		winner = Winner(individual=str(team.team_owner),

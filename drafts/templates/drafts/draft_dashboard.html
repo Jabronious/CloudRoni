@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load fontawesome %}
+
+{% block content%}
+<script src="{% static 'drafts/js/drafts.js' %}"></script>
+<link rel="stylesheet" href="{% static 'drafts/css/drafts.css' %}">
+<link rel="stylesheet" href="{% static 'drafts/css/jquery.countdown.css' %}"> 
+<script type="text/javascript" src="{% static 'drafts/js/jquery.plugin.js' %}"></script> 
+<script type="text/javascript" src="{% static 'drafts/js/jquery.countdown.js' %}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var endTimer = new Date("{{ draft.end_turn_timer.isoformat }}");
+        endTimer = new Date(endTimer.getTime());
+        $('#countdown').countdown({until: endTimer, format: 'MS', compact: true, description: 'Draft Timer'});
+
+        $('.draft-button').on('click', function() {
+            draftPlayer("{% url 'drafts:draft_player' %}", $(this).data('player-id'), $('#current-draftee').data('team-id'));
+        });
+    });
+</script>
+
+<div id='draft-dashboard'>
+    <div id='current-draftee' data-team-id='{{initial.team.id}}' class='three-column'>
+        <h1 id='current-team-header'>Current Drafting Team</h1>
+        <div class='inner-details'>
+            <h3>Team: <span id='drafting-team-name' style='font-weight: normal'>{{ initial.team }}</span></h3>
+            <ol id='drafting-team'>
+                {% for player in initial.team.get_player_set %}
+                    <li>{{ player }} - {{ player.usage }}</li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+    
+    <div id="available-players" class='three-column'>
+        <div id='countdown'>
+        </div>
+        <div class='header'>
+            <h1 id='available-players-header'>Available Players</h1>
+        </div>
+        <ol>
+            {% for player in players_list %}
+                <li class='avail-player-li'>
+                    <span class='avail-player-name'>{{ player }}</span>
+                    {% if not player.player_team %}
+                        <button class='draft-button' data-player-id='{{ player.id }}'>Draft</button>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ol>
+    </div>
+    
+    <div id="other-teams" class='three-column'>
+        <h1 id='other-teams-header'>Other Teams</h1>
+        {% for team in teams_list %}
+            {% if team != initial.team %}
+                <div class='waiting-team'>
+                    <h4>{{ team.drafter.position }}. {{ team }}</h4>
+                    <ol>
+                        {% for player in team.get_player_set %}
+                            <li>{{ player }} - {{ player.usage }}</li>
+                        {% endfor %}
+                    </ol>
+                </div>
+                <div class='five-px-spacer'></div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}
