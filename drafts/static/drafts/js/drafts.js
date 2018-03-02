@@ -34,6 +34,10 @@ function draftPlayer(url, player_id, team_id) {
     });
 }
 
+function autoDraft() {
+    
+}
+
 $(document).ready(function() {
     
 });
