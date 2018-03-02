@@ -172,3 +172,25 @@ class DraftViewsTests(TestCase):
 
         self.assertEqual(Draft.objects.all().count(), 0)
         self.assertJSONEqual(response.content, {'url': reverse('cloud_roni:index')})
+
+    def test_draft_results(self):
+        self.login_user()
+        #upload players
+        myfile = open('csv_upload/csv_test_file.csv','r') 
+        self.client.post('/csv/upload/csv/', {'csv_file':myfile})
+
+        self.client.get('/draft/start_draft/')
+        all_players = UserPlayer.objects.all()
+        for player in all_players:
+            player.player_team = self.first_team
+            player.save()
+        player = UserPlayer.objects.last()
+        player.player_team = None
+        player.save()
+        draft = Draft.objects.last()
+
+        self.client.post('/draft/draft_player/', {'player_id': str(player.id), 'team_id': str(draft.current_team.id)})
+
+        response = self.client.get('/draft/draft_results/')
+
+        self.assertIn("draft-results-container", response.content)

@@ -94,6 +94,9 @@ def end_draft(request):
 
 def draft_results(request):
     league = League.objects.get(participants=request.user)
+    if not league.drafted:
+        return HttpResponseRedirect(reverse('cloud_roni:index'))
+
     teams = Team.objects.filter(league=league)
 
     return render(request, 'drafts/draft_results.html', {'team_list': teams})
