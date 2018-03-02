@@ -23,12 +23,9 @@
 				{% endif %}
 			</tr>
 		{% endfor %}
-	{% else %}
-		<p>These are not the teams you are looking for...</p>
-{% endif %}
 	</table>
 	<div id='point-breakdown'>
-		<h3 id='point-breakdown-header'>Point Break Down</h3>
+		<h3 id='point-breakdown-header'>Point Break Down (Last 7 Days)</h3>
 		{% for team in teams_list %}
 			<div class='point-set-container'>
 				<table>
@@ -53,6 +50,9 @@
 			</div>
 		{% endfor %}
 	</div>
+	{% else %}
+		<p>These are not the teams you are looking for...</p>
+	{% endif %}
 </div>
 
 {% endblock content %}
