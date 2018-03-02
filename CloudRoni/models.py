@@ -27,6 +27,9 @@ class Team(models.Model):
     def get_player_set(self):
         return UserPlayer.objects.filter(player_team=self)
 
+    def get_drafted_players(self):
+        return UserPlayer.objects.filter(drafted_team=self, drafted=True)
+
     def filter_team_points(self):
         players = UserPlayer.objects.filter(player_team=self)
         return players.aggregate(Sum('points_scored')).get('points_scored__sum', 0)
@@ -59,6 +62,8 @@ class UserPlayer(models.Model):
         choices=USAGE_CHOICES,
         default=NOT_USING,)
     league = models.ForeignKey(League)
+    drafted_team = models.ForeignKey(Team, related_name = "drafted_team", null=True, blank=True)
+    drafted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.player_first_name + ' ' + self.player_last_name

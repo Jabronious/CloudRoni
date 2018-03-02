@@ -11,6 +11,7 @@ from drafts.models import Draft, Drafter
 from django.utils import timezone
 from leagues.forms import LeagueForm
 from django.views.decorators.csrf import csrf_exempt
+from leagues.models import League
 import datetime
 import random
 
@@ -91,8 +92,15 @@ def end_draft(request):
     Draft.objects.get(league=request.user.league).delete()
     return JsonResponse({'url': reverse('cloud_roni:index')})
 
+def draft_results(request):
+    league = League.objects.get(participants=request.user)
+    teams = Team.objects.filter(league=league)
+
+    return render(request, 'drafts/draft_results.html', {'team_list': teams})
+
 def finalize_draft_pick(team, player, league):
-    player.player_team = team
+    player.player_team = player.drafted_team = team
+    player.drafted = True
     player.save()
 
     teams = Team.objects.filter(league=league)

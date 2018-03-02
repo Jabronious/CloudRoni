@@ -50,7 +50,7 @@ ol {
     margin-left: 5px;
 }
 
-.waiting-team > h4 {
+.waiting-team > h4, .drafted-team > h4 {
     background-color: #1e392a;
     color: #fff;
     margin: 0;
@@ -60,4 +60,26 @@ ol {
     float: left;
     height: 5px;
     width: 100%;
+}
+
+#draft-results-container {
+    width: 50%;
+    text-align: center;
+    margin: auto;
+}
+
+.drafted-team:nth-child(even) {
+    float: left;
+}
+
+.drafted-team:nth-child(odd) {
+    float: right;
+}
+
+.drafted-team {
+    width: 430px;
+    background-color: #3CC47C;
+    color: #fff;
+    margin-bottom: 5px;
+
 }
