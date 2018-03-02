@@ -137,7 +137,7 @@ def terminate_season(request):
 def end_season(league):
 	teams =  Team.objects.filter(league=league).order_by('-team_points').reverse()[:3]
 	players = UserPlayer.objects.filter(player_team=teams)
-	players.update(player_team=None)
+	players.update(player_team=None, drafted_team=None, drafted=False)
 	winner_dict = {}
 	for idx, team in enumerate(teams):
 		winner = Winner(individual=str(team.team_owner),
