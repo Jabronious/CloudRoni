@@ -176,7 +176,7 @@ class DraftViewsTests(TestCase):
     def test_draft_results(self):
         self.login_user()
         #upload players
-        myfile = open('csv_upload/csv_test_file.csv','r') 
+        myfile = open('csv_upload/csv_test_file.csv','r')
         self.client.post('/csv/upload/csv/', {'csv_file':myfile})
 
         self.client.get('/draft/start_draft/')
