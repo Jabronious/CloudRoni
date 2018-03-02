@@ -84,7 +84,6 @@ def draft_player(request):
     player = UserPlayer.objects.get(id=int(request.POST.get('player_id')))
 
     response = finalize_draft_pick(team, player, league)
-    pdb.set_trace()
     return response
 
 @csrf_exempt
