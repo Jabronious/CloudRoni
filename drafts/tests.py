@@ -117,6 +117,27 @@ class DraftViewsTests(TestCase):
         self.assertEqual(draft.current_team, Drafter.objects.get(league=self.league, position=current_drafter_position+1).team)
         self.assertIn('"current_team_name": "' + str(draft.current_team) + '"', response.content)
 
+    def test_auto_draft_player(self):
+        self.login_user()
+        #upload players
+        myfile = open('csv_upload/csv_test_file.csv','r') 
+        self.client.post('/csv/upload/csv/', {'csv_file':myfile})
+        
+        self.client.get('/draft/start_draft/')
+        draft = Draft.objects.last()
+        player = UserPlayer.objects.first()
+        current_team = draft.current_team
+        current_drafter_position = Drafter.objects.get(team=current_team).position
+        
+        response = self.client.post('/draft/auto_draft/', {'team_id': str(current_team.id)})
+        
+        draft = Draft.objects.last()
+        player = UserPlayer.objects.get(id=player.id)
+
+        self.assertTrue(player.player_team == current_team)
+        self.assertEqual(draft.current_team, Drafter.objects.get(league=self.league, position=current_drafter_position+1).team)
+        self.assertIn('"current_team_name": "' + str(draft.current_team) + '"', response.content)
+
     def test_draft_player_with_no_more_players(self):
         self.login_user()
         #upload players

@@ -68,21 +68,40 @@ def start_draft(request):
     return render(request, 'drafts/draft_dashboard.html', context)
 
 @csrf_exempt
-def draft_player(request):
+def auto_draft(request):
+    league = request.user.league
     team = Team.objects.get(id=int(request.POST.get('team_id')))
+    player = UserPlayer.objects.filter(league=league, player_team=None).first()
 
+    response = finalize_draft_pick(team, player, league)
+
+    return response
+
+@csrf_exempt
+def draft_player(request):
+    league = request.user.league
+    team = Team.objects.get(id=int(request.POST.get('team_id')))
     player = UserPlayer.objects.get(id=int(request.POST.get('player_id')))
+
+    response = finalize_draft_pick(team, player, league)
+    return response
+
+@csrf_exempt
+def end_draft(request):
+    Draft.objects.get(league=request.user.league).delete()
+    return JsonResponse({'url': reverse('cloud_roni:index')})
+
+def finalize_draft_pick(team, player, league):
     player.player_team = team
     player.save()
-    
-    league = request.user.league
+
     teams = Team.objects.filter(league=league)
     if league.is_players_available():
         return JsonResponse({
             'ended': True,
             'url': reverse('drafts:end_draft'),
         })
-    
+
     draft = Draft.objects.get(league=league)
     try:
         position = draft.next_team
@@ -95,7 +114,7 @@ def draft_player(request):
     draft.current_team = current_team.team
     draft.end_turn_timer = timezone.now() + datetime.timedelta(minutes=3)
     draft.save()
-    
+
     try:
         player_list = []
         for solo_player in UserPlayer.objects.filter(player_team=current_team.team):
@@ -117,8 +136,3 @@ def draft_player(request):
         'drafted_player_id': player.id,
         'teams_player_list': teams_player_list,
     })
-
-@csrf_exempt
-def end_draft(request):
-    Draft.objects.get(league=request.user.league).delete()
-    return JsonResponse({'url': reverse('cloud_roni:index')})

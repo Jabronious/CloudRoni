@@ -12,7 +12,13 @@
     $(document).ready(function() {
         var endTimer = new Date("{{ draft.end_turn_timer.isoformat }}");
         endTimer = new Date(endTimer.getTime());
-        $('#countdown').countdown({until: endTimer, format: 'MS', compact: true, description: 'Draft Timer'});
+        $('#countdown').countdown({
+            until: endTimer,
+            format: 'MS',
+            compact: true,
+            onTick: autoDraft,
+            description: 'Draft Timer',
+        });
 
         $('.draft-button').on('click', function() {
             draftPlayer("{% url 'drafts:draft_player' %}", $(this).data('player-id'), $('#current-draftee').data('team-id'));
