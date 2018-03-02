@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load fontawesome %}
+
+{% block content%}
+<script src="{% static 'drafts/js/drafts.js' %}"></script>
+<link rel="stylesheet" href="{% static 'drafts/css/drafts.css' %}">
+
+<div id="draft-results-container">
+    <h1 id='draft-results-header'>Draft Results</h1>
+    {% for team in team_list %}
+        <div class='drafted-team'>
+            <h4>{{ forloop.counter }}. {{ team }}</h4>
+            <ol>
+                {% for player in team.get_drafted_players %}
+                    <li>{{ player }} - {{ player.usage }}</li>
+                {% endfor %}
+            </ol>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock content %}
