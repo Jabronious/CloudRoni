@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^start_draft/$', views.start_draft, name='start_draft'),
     url(r'^draft_player/$', views.draft_player, name='draft_player'),
     url(r'^end_draft/$', views.end_draft, name='end_draft'),
+    url(r'^auto_draft/$', views.auto_draft, name='auto_draft'),
 ]
