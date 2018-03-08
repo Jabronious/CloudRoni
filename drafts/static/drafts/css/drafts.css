@@ -68,18 +68,11 @@ ol {
     margin: auto;
 }
 
-.drafted-team:nth-child(even) {
-    float: left;
-}
-
-.drafted-team:nth-child(odd) {
-    float: right;
-}
-
 .drafted-team {
-    width: 430px;
+    width: 45%;
     background-color: #3CC47C;
     color: #fff;
     margin-bottom: 5px;
+    display: inline-block;
 
 }

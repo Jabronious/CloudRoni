@@ -251,6 +251,9 @@ def delete_player(request, player_id):
 
 	return HttpResponseRedirect(reverse('cloud_roni:team', args=(team.id,)))
 
+def rules(request):
+	return render(request, 'rules.html')
+
 def build_and_send_email_alert(player, point):
 	email_address = player.player_team.team_owner.email
 
