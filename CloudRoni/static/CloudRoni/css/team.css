@@ -46,3 +46,26 @@
 .point-set-container > th {
     height: 40px;
 }
+
+#rules-container {
+    margin: 35px;
+    line-height: 1.5;
+}
+
+#rules-container > p {
+    text-align: center;
+}
+#rules-container > h3, #rules-container > h5, #rules-container > h1 {
+    text-align: center;
+    text-decoration: underline;
+}
+
+#rules-container > ol {
+    width: 50%;
+    margin: auto;
+}
+
+#rules-container > ul {
+    width: 12%;
+    margin: auto;
+}
