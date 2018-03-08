@@ -1,5 +1,4 @@
-# CloudRoni
-<h1>CloudRoni Rules</h1>
+# CloudRoni Rules
     <h3>GOAL</h3>
     <p>
         The objective of this competition is to boost moral and create camaraderie. The other primary goal is to increase usership of your particular products and provide a means to get problematic clients to a level of self-sufficiency while increasing every day usage.
