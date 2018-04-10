@@ -62,9 +62,9 @@ function ajaxSuccess(data) {
             if (i == data.current_team_name) {
                 continue;
             }
-            $('#other-teams').append("<div class='waiting-team'><h4>" + i + "</h4><ol class='" + i + "'></ol></div><div class='five-px-spacer'></div>");
+            $('#other-teams').append("<div class='waiting-team'><h4>" + i.replace(/ /g,"_") + "</h4><ol class='" + i.replace(/ /g,"_") + "'></ol></div><div class='five-px-spacer'></div>");
             for (var k = 0; k < data.teams_player_list[i].length; k++) {
-                $("." + i).append("<li>" + data.teams_player_list[i][k] + "</li>")
+                $("." + i.replace(/ /g,"_")).append("<li>" + data.teams_player_list[i][k] + "</li>")
             }
         }
         $(".draft-button[data-player-id=" + data.drafted_player_id + "]").remove()
